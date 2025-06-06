@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Franchini - Concessionnaire Deutz-Fahr</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/footer-style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="main-header">
+        <div class="container">
+            <div class="logo">
+                <a href="index.html" class="logo-link">
+                    <div class="logo-text">FRANCHINI</div>
+                </a>
+                <div class="header-social">
+                    <a href="https://www.facebook.com/franchinimarches" target="_blank" class="social-icon">
+                        <i class="fab fa-facebook-f"></i>
+                    </a>
+                    <a href="https://www.instagram.com/franchini_deutzfahr" target="_blank" class="social-icon">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                </div>
+            </div>
+            <nav class="main-nav">
+                <ul>
+                    <li class="dropdown">
+                        <a href="pages/concession.html">La concession</a>
+                    </li>
+                    <li class="dropdown">
+                        <a href="#">Matériel neuf</a>
+                        <div class="dropdown-content">
+                            <a href="pages/materiel.html">Matériel neuf</a>
+                            <a href="pages/materiel-disponible.html">Matériel neuf disponible</a>
+                        </div>
+                    </li>
+                    <li><a href="pages/location.html">Location</a></li>
+                    <li><a href="pages/occasion.html">Occasion</a></li>
+                    <li><a href="pages/magasin.html">Magasin</a></li>
+                    <li><a href="pages/contact.html">Contact</a></li>
+                    <li><a href="tel:0475474037" class="phone-number"><i class="fas fa-phone"></i> 04 75 47 40 37</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <section class="hero-section">
+            <div class="slideshow-container">
+                <div class="slide fade">
+                    <img src="assets/images/slider/DF_Facebook-Cover_1_FR.png" alt="Deutz-Fahr 1">
+                    <div class="slide-content">
+                        <h2>Bienvenue chez Franchini</h2>
+                        <p>Votre concessionnaire Deutz-Fahr depuis plus de 75 ans</p>
+                        <a href="pages/concession.html" class="btn-primary">Découvrir</a>
+                    </div>
+                </div>
+                <div class="slide fade">
+                    <img src="assets/images/slider/DF_Facebook-Cover_2_FR.png" alt="Deutz-Fahr 2">
+                    <div class="slide-content">
+                        <h2>Matériel agricole neuf</h2>
+                        <p>Découvrez notre gamme de tracteurs et matériels Deutz-Fahr</p>
+                        <a href="pages/materiel.html" class="btn-primary">Voir les modèles</a>
+                    </div>
+                </div>
+                <div class="slide fade">
+                    <img src="assets/images/slider/DF_Facebook-Cover_3_FR.png" alt="Deutz-Fahr 3">
+                    <div class="slide-content">
+                        <h2>Service après-vente</h2>
+                        <p>Notre équipe de techniciens à votre service</p>
+                        <a href="pages/contact.html" class="btn-primary">Nous contacter</a>
+                    </div>
+                </div>
+                <div class="slide-dots">
+                    <span class="dot active"></span>
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                </div>
+            </div>
+            <div class="social-overlay">
+                <a href="https://www.facebook.com/franchinimarches" target="_blank" class="social-icon">
+                    <i class="fab fa-facebook-f"></i>
+                </a>
+                <a href="https://www.instagram.com/franchini_deutzfahr" target="_blank" class="social-icon">
+                    <i class="fab fa-instagram"></i>
+                </a>
+            </div>
+        </section>
+
+        <section class="sections-grid">
+            <div class="container">
+                <div class="grid-container">
+                    <!-- Section Actualités -->
+                    <div class="news-section">
+                        <h2 class="section-title">Actualités</h2>
+                        <div id="actualites-preview-container" class="actualites-list-simple" style="margin-top: 1.5rem;">
+                            <!-- Les actualités chargées depuis localStorage seront insérées ici (ce conteneur n'est plus activement utilisé par news-carousel.js) -->
+                        </div>
+                        <div class="text-center" style="margin-top: 1.5rem;">
+                            <a href="pages/actualites.html" class="btn-primary">Voir toutes nos actualités</a>
+                        </div>
+                    </div>
+
+                    <!-- Section Occasions -->
+                    <div class="occasions-section">
+                        <h2 class="section-title">Nos occasions</h2>
+                                                <div id="occasions-container" class="occasions-list-simple" style="margin-top: 1.5rem;">
+                            <!-- Les occasions chargées depuis localStorage seront insérées ici -->
+                        </div>
+                        <div class="text-center" style="margin-top: 1.5rem;">
+                            <a href="pages/occasion.html" class="btn-primary">Voir toutes nos occasions</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Slider principal
+            const mainSlides = document.querySelectorAll('.slideshow-container .slide');
+            const mainDots = document.querySelectorAll('.slideshow-container .dot');
+            let mainSlideIndex = 0;
+            let mainSlideInterval;
+
+            function showMainSlide(index) {
+                mainSlides.forEach(slide => slide.classList.remove('active'));
+                mainDots.forEach(dot => dot.classList.remove('active'));
+                mainSlideIndex = index;
+                if (mainSlideIndex >= mainSlides.length) mainSlideIndex = 0;
+                if (mainSlideIndex < 0) mainSlideIndex = mainSlides.length - 1;
+                mainSlides[mainSlideIndex].classList.add('active');
+                mainDots[mainSlideIndex].classList.add('active');
+            }
+
+            function nextMainSlide() {
+                showMainSlide(mainSlideIndex + 1);
+            }
+
+            // Initialiser le slider principal
+            showMainSlide(0);
+            mainSlideInterval = setInterval(nextMainSlide, 5000);
+
+            // Événements des points de navigation
+            mainDots.forEach((dot, index) => {
+                dot.addEventListener('click', () => {
+                    clearInterval(mainSlideInterval);
+                    showMainSlide(index);
+                    mainSlideInterval = setInterval(nextMainSlide, 5000);
+                });
+            });
+
+            // Le slider des occasions a été désactivé.
+        });
+    </script>
+
+    <style>
+    /* Styles pour la section Actualités */
+    .news-section {
+        padding: 3rem 0;
+        background-color: #f9f9f9;
+    }
+
+    .section-title {
+        text-align: center;
+        margin-bottom: 2rem;
+        color: #2c3e50;
+        font-size: 2rem;
+        position: relative;
+        padding-bottom: 1rem;
+    }
+
+    .section-title:after {
+        content: '';
+        display: block;
+        width: 80px;
+        height: 3px;
+        background: #3D6AA2;
+        margin: 0.5rem auto 0;
+    }
+
+    .news-carousel {
+        position: relative;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 20px;
+    }
+
+    .actualite-item {
+        background: white;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .actualite-item:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+    }
+
+    .actualite-image {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+    }
+
+    .actualite-content {
+        padding: 1.5rem;
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .actualite-date {
+        color: #666;
+        font-size: 0.9rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .actualite-title {
+        font-size: 1.25rem;
+        margin: 0 0 1rem;
+        color: #2c3e50;
+    }
+
+    .actualite-desc {
+        color: #555;
+        margin-bottom: 1.5rem;
+        flex-grow: 1;
+    }
+
+    .actualite-link {
+        display: inline-block;
+        color: #3D6AA2;
+        text-decoration: none;
+        font-weight: 500;
+        margin-top: auto;
+    }
+
+    .actualite-link:hover {
+        text-decoration: underline;
+    }
+
+    /* Carrousel */
+    .news-carousel {
+        position: relative;
+    }
+
+    .carousel-track {
+        display: flex;
+        transition: transform 0.5s ease;
+    }
+
+    .carousel-item {
+        min-width: 100%;
+        padding: 0 15px;
+        box-sizing: border-box;
+    }
+
+    .carousel-nav {
+        display: flex;
+        justify-content: center;
+        margin-top: 20px;
+    }
+
+    .carousel-dot {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background: #ccc;
+        margin: 0 5px;
+        cursor: pointer;
+        transition: background 0.3s ease;
+    }
+
+    .carousel-dot.active {
+        background: #3D6AA2;
+    }
+
+    .carousel-arrow {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        background: rgba(255,255,255,0.8);
+        border: none;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        z-index: 2;
+    }
+
+    .carousel-arrow.prev {
+        left: 10px;
+    }
+
+    .carousel-arrow.next {
+        right: 10px;
+    }
+
+    @media (min-width: 768px) {
+        .carousel-item {
+            min-width: 50%;
+        }
+    }
+
+    @media (min-width: 992px) {
+        .carousel-item {
+            min-width: 33.333%;
+        }
+    }
+
+    /* Slider styles */
+    .slideshow-container {
+        position: relative;
+        height: 500px;
+        overflow: hidden;
+    }
+
+    .slide {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        opacity: 0;
+        transition: opacity 1s ease-in-out;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .slide.active {
+        opacity: 1;
+        z-index: 1;
+    }
+
+    .slide img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .slide-content {
+        position: absolute;
+        left: 50px;
+        bottom: 50px;
+        max-width: 500px;
+        color: white;
+        text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        z-index: 2;
+    }
+
+    .slide-content h2 {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .slide-content p {
+        font-size: 1.2rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .btn-primary {
+        display: inline-block;
+        background-color: #3D6AA2;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 5px;
+        text-decoration: none;
+        transition: background-color 0.3s;
+        cursor: pointer;
+    }
+
+    .btn-primary:hover {
+        background-color: #2c4c73;
+    }
+
+    .slide-dots {
+        position: absolute;
+        bottom: 20px;
+        right: 20px;
+        display: flex;
+        gap: 10px;
+        z-index: 2;
+    }
+
+    .dot {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background-color: rgba(255,255,255,0.5);
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+    .dot.active {
+        background-color: white;
+    }
+
+    /* News section styles */
+    .news-occasions-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+    }
+
+    .news-card {
+        background-color: white;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+
+    .news-card h3 {
+        padding: 1rem;
+        margin: 0;
+        background-color: #3D6AA2;
+        color: white;
+    }
+
+    .news-list {
+        padding: 1rem;
+    }
+
+    .news-item {
+        padding-bottom: 1rem;
+        margin-bottom: 1rem;
+        border-bottom: 1px solid #eee;
+    }
+
+    .news-item:last-child {
+        border-bottom: none;
+        margin-bottom: 0;
+    }
+
+    .news-date {
+        color: #888;
+        font-size: 0.9rem;
+    }
+
+    .news-title {
+        font-weight: bold;
+        margin: 0.3rem 0;
+        color: #333;
+    }
+
+    .news-item p {
+        margin: 0.5rem 0 0;
+        color: #555;
+        font-size: 0.95rem;
+    }
+
+    /* Occasions slider */
+    .occasions-slider {
+        position: relative;
+        height: 300px;
+        overflow: hidden;
+    }
+
+    .occasions-slider .slide {
+        border-radius: 0;
+    }
+
+    .occasions-slider .slide-content {
+        left: 0;
+        bottom: 0;
+        width: 100%;
+        padding: 1rem;
+        background: linear-gradient(transparent, rgba(0,0,0,0.7));
+        text-align: center;
+    }
+
+    .occasions-slider .slide-content h3 {
+        font-size: 1.5rem;
+        margin: 0 0 0.5rem;
+        background: none;
+        padding: 0;
+    }
+
+    @media (max-width: 768px) {
+        .news-section {
+            padding: 1rem 0;
+        }
+        .news-occasions-grid {
+            grid-template-columns: 1fr;
+            gap: 1rem;
+        }
+        .slideshow-container {
+            height: 400px;
+        }
+    }
+
+    /* Style du logo */
+    .logo-link {
+        text-decoration: none;
+        position: relative;
+        display: block;
+    }
+
+    .logo-text {
+        font-family: Arial, sans-serif;
+        font-size: 32px;
+        font-weight: bold;
+        color: #333;
+        letter-spacing: 1px;
+        position: relative;
+    }
+
+    .logo {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        gap: 20px;
+    }
+
+    .header-social {
+        display: flex;
+        gap: 15px;
+        align-items: center;
+    }
+
+    .header-social .social-icon {
+        color: #888;
+        font-size: 20px;
+        transition: color 0.3s, transform 0.3s;
+        opacity: 0.7;
+    }
+
+    .header-social .social-icon:hover {
+        color: #3D6AA2;
+        transform: translateY(-2px);
+        opacity: 1;
+    }
+
+    @media (max-width: 768px) {
+        .logo-text {
+            font-size: 24px;
+        }
+    }
+
+    .social-overlay {
+        position: absolute;
+        bottom: 20px;
+        right: 20px;
+        display: flex;
+        gap: 15px;
+        z-index: 2;
+    }
+
+    .social-overlay .social-icon {
+        color: white;
+        font-size: 24px;
+        transition: transform 0.3s, opacity 0.3s;
+        opacity: 0.8;
+        text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    }
+
+    .social-overlay .social-icon:hover {
+        transform: translateY(-2px);
+        opacity: 1;
+    }
+
+    /* Styles pour les sections */
+    .hero-section {
+        margin-bottom: 0;
+    }
+
+    .news-section {
+        padding: 2rem 0;
+        background-color: #f5f5f5;
+    }
+    
+    .text-center {
+        text-align: center;
+    }
+    </style>
+    
+    <!-- Section Actualités -->
+    <section class="news-section" id="actualites">
+        <div class="container">
+            <h2 class="section-title">Actualités</h2>
+            <div id="actualites-container" class="news-carousel">
+                <!-- Les actualités seront chargées ici dynamiquement -->
+                <p>Chargement des actualités en cours...</p>
+            </div>
+        </div>
+    </section>
+
+    <footer class="main-footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-info">
+                    <h4><a href="pages/contact.html" style="color: #4CAF50; text-decoration: none;">FRANCHINI</a></h4>
+                    <p>111 av des monts du matin</p>
+                    <p>26300 Marches</p>
+                    <p>Tél : 04 75 47 40 37</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Franchini SARL. Tous droits réservés. <a href="pages/connexion-prive.html" class="footer-intranet"><i class="fas fa-lock"></i> Connexion privée</a></p>
+            </div>
+        </div>
+    </footer>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Charger et afficher les occasions
+            const occasionsContainer = document.getElementById('occasions-container');
+            if (occasionsContainer) {
+                try {
+                    const storedOccasions = localStorage.getItem('franchiniOccasions');
+                    if (storedOccasions) {
+                        const occasions = JSON.parse(storedOccasions);
+                        if (occasions && occasions.length > 0) {
+                            occasionsContainer.innerHTML = ''; // Vider le conteneur
+                            occasions.forEach(occasion => {
+                                const occasionElement = document.createElement('div');
+                                occasionElement.classList.add('occasion-item-simple');
+                                let nomAffichage = '';
+                                if (occasion.type === 'tracteur') {
+                                    nomAffichage = `${occasion.marque || 'N/A'} ${occasion.modele || ''}`.trim();
+                                } else if (occasion.type === 'materiel') {
+                                    nomAffichage = `${occasion.marque || 'N/A'} ${occasion.typeMateriel || ''}`.trim();
+                                }
+                                occasionElement.innerHTML = `
+                                    <h4>${nomAffichage || 'Information non disponible'}</h4>
+                                    <p>État: ${occasion.etat ? occasion.etat.charAt(0).toUpperCase() + occasion.etat.slice(1) : 'N/A'}</p>
+                                    <p>Prix: ${occasion.prix ? occasion.prix + ' €' : 'Prix sur demande'}</p>
+                                `;
+                                occasionsContainer.appendChild(occasionElement);
+                            });
+                        } else {
+                            occasionsContainer.innerHTML = '<p>Aucune occasion à afficher pour le moment.</p>';
+                        }
+                    } else {
+                        occasionsContainer.innerHTML = '<p>Aucune occasion à afficher pour le moment.</p>';
+                    }
+                } catch (e) {
+                    console.error('Erreur lors du chargement des occasions depuis localStorage:', e);
+                    occasionsContainer.innerHTML = '<p>Erreur lors du chargement des occasions.</p>';
+                }
+            }
+
+            // Le chargement des actualités est maintenant géré par le fichier news-carousel.js
+        });
+    </script>
+    
+    <!-- Script du carrousel d'actualités -->
+    <script src="assets/js/news-carousel.js"></script>
+</body>
+</html>

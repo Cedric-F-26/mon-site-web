@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>La Concession - Franchini</title>
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/css/footer-style.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <style>
+    /* Style du logo */
+    .logo-link {
+        text-decoration: none;
+        position: relative;
+        display: block;
+    }
+
+    .logo-text {
+        font-family: Arial, sans-serif;
+        font-size: 32px;
+        font-weight: bold;
+        color: #333;
+        letter-spacing: 1px;
+        position: relative;
+    }
+
+    .logo {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        gap: 20px;
+    }
+
+    .header-social {
+        display: flex;
+        gap: 15px;
+        align-items: center;
+    }
+
+    .header-social .social-icon {
+        color: #888;
+        font-size: 20px;
+        transition: color 0.3s, transform 0.3s;
+        opacity: 0.7;
+    }
+
+    .header-social .social-icon:hover {
+        color: #3D6AA2;
+        transform: translateY(-2px);
+        opacity: 1;
+    }
+
+    @media (max-width: 768px) {
+        .logo-text {
+            font-size: 24px;
+        }
+    }
+    </style>
+</head>
+<body>
+    <header class="main-header">
+        <div class="container">
+            <div class="logo">
+                <a href="../index.html" class="logo-link">
+                    <div class="logo-text">FRANCHINI</div>
+                </a>
+                <div class="header-social">
+                    <a href="https://www.facebook.com/franchinimarches" target="_blank" class="social-icon">
+                        <i class="fab fa-facebook-f"></i>
+                    </a>
+                    <a href="https://www.instagram.com/franchini_deutzfahr" target="_blank" class="social-icon">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                </div>
+            </div>
+            <nav class="main-nav">
+                <ul>
+                    <li class="dropdown">
+                        <a href="concession.html" class="active">La concession</a>
+                    </li>
+                    <li class="dropdown">
+                        <a href="#">Matériel neuf</a>
+                        <div class="dropdown-content">
+                            <a href="materiel.html">Matériel neuf</a>
+                            <a href="materiel-disponible.html">Matériel neuf disponible</a>
+                        </div>
+                    </li>
+                    <li><a href="location.html">Location</a></li>
+                    <li><a href="occasion.html">Occasion</a></li>
+                    <li><a href="magasin.html">Magasin</a></li>
+
+                    <li><a href="contact.html">Contact</a></li>
+                    <li><a href="tel:0475474037" class="phone-number"><i class="fas fa-phone"></i> 04 75 47 40 37</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <section class="page-header">
+            <div class="container">
+                <h1>Notre Concession</h1>
+            </div>
+        </section>
+
+        <section id="concession" class="concession-section">
+            <div class="container">
+                <div class="concession-info">
+                    <div class="info-box">
+                        <h3>Horaires d'ouverture</h3>
+                        <p><strong>Du Lundi au Vendredi</strong></p>
+                        <p>8h00 - 12h00</p>
+                        <p>13h30 - 18h00</p>
+                        <div class="contact-info">
+                            <p><i class="fas fa-phone"></i> <a href="tel:0475474037">04 75 47 40 37</a></p>
+                            <p><i class="fas fa-map-marker-alt"></i> <a href="https://maps.app.goo.gl/FtHrDhjkSmq5tMdg6" target="_blank">111 av des monts du matin, 26300 Marches</a></p>
+                        </div>
+                        <div class="route-calculator">
+                            <h3>Calculer votre itinéraire</h3>
+                            <form id="routeForm" class="route-form">
+                                <div class="form-group">
+                                    <input type="text" id="startAddress" placeholder="Votre adresse de départ" required>
+                                    <button type="button" onclick="calculateRoute()" class="btn-route">Calculer l'itinéraire</button>
+                                </div>
+                            </form>
+                            <div id="routeInstructions" class="route-instructions"></div>
+                        </div>
+                    </div>
+                    <div id="map" class="location-map"></div>
+                </div>
+
+                <div class="about-section">
+                    <h2>Qui sommes-nous ?</h2>
+                    <p>Ets Franchini : Plus de 75 Ans de Passion et d'Expertise au Service de l'Agriculture, de Génération en Génération</p>
+                    <p>Bienvenue chez les Établissements Franchini, votre partenaire de confiance pour le matériel agricole depuis 1948. Ancrés au cœur de notre terroir, nous mettons notre expérience, transmise de génération en génération, au service des agriculteurs d'aujourd'hui et de demain.</p>
+
+                    <h2>Notre Histoire : De la Forge à la Pointe de la Technologie</h2>
+                    <p>L'aventure des Ets Franchini a débuté il y a plus de 75 ans, en juillet 1948, lorsque Louis et Ludovic Franchini, deux frères forgerons passionnés, ont uni leurs forces. À cette époque, le cheval et le bœuf étaient encore les piliers du travail agricole, mais l'esprit visionnaire des fondateurs les a rapidement conduits à anticiper la révolution de la mécanisation.</p>
+
+                    <p>De la forge traditionnelle, où l'on ferrait les animaux et façonnait les outils, l'entreprise a su évoluer avec son temps :</p>
+                    <ul>
+                        <li>Les débuts de la mécanisation : Sentant le vent du changement, les frères Franchini ont commencé par réparer les premières machines agricoles, avant de se lancer dans la vente de tracteurs d’occasions dès les années 1955.</li>
+                        <li>Une croissance maîtrisée : Au fil des décennies, notre expertise s'est affirmée. Nous sommes devenus une concession reconnue, partenaire de la marque prestigieuses Deutz-Fahr, témoignant de notre engagement envers la qualité et la performance.</li>
+                        <li>Une affaire de famille : L'esprit familial est l'ADN de notre société. Après les fondateurs, la génération suivante, avec notamment Michel, Christian et Alain, a repris le flambeau, chacun apportant sa pierre à l'édifice – du développement commercial à la gestion administrative, en passant par l'excellence du service après-vente. En mai 2024, après de nombreuses années dévouées au service de nos clients et au développement commercial de l'entreprise, Michel Franchini a pris une retraite bien méritée. C'est avec fierté et un engagement renouvelé que Cédric Franchini, représentant la nouvelle génération, a repris le flambeau. Il perpétue ainsi l'héritage familial, insufflant une dynamique nouvelle tout en préservant les valeurs qui ont fait notre réputation.</li>
+                    </ul>
+
+                    <h2>Nos Valeurs, Votre Garantie</h2>
+                    <p>Chez Ets Franchini, nous croyons en des valeurs fortes qui guident chacune de nos actions :</p>
+                    <ul>
+                        <li>Proximité et Écoute : Nous sommes plus que des vendeurs ; nous sommes vos conseillers. Comprendre vos besoins spécifiques est notre priorité.</li>
+                        <li>Expertise Technique : Des décennies d'expérience nous permettent de vous offrir un savoir-faire inégalé, tant pour le choix de votre matériel que pour son entretien.</li>
+                        <li>Qualité et Fiabilité : Nous sélectionnons rigoureusement nos équipements pour leur robustesse et leur performance, afin de garantir votre productivité.</li>
+                        <li>Service Après-Vente : Notre atelier spécialisé et nos techniciens qualifiés sont là pour assurer la longévité et le bon fonctionnement de votre matériel.</li>
+                        <li>Adaptabilité : Le monde agricole évolue constamment. Nous restons à l'affût des dernières innovations pour vous proposer les solutions les plus adaptées.</li>
+                    </ul>
+
+                    <h2>Aujourd'hui et Demain : Engagés à Vos Côtés sous la Direction de Cédric Franchini</h2>
+                    <p>Forts de cet héritage et désormais sous l'impulsion de Cédric Franchini, nous sommes plus que jamais tournés vers l'avenir. Les Ets Franchini continuent de vous accompagner avec :</p>
+                    <ul>
+                        <li>Une large gamme de matériel agricole neuf et d'occasion.</li>
+                        <li>Un stock complet de pièces détachées.</li>
+                        <li>Un service de réparation et d'entretien réactif et compétent.</li>
+                        <li>Des conseils personnalisés pour optimiser vos investissements.</li>
+                    </ul>
+                    <p>Notre équipe dévouée est à votre entière disposition pour répondre à vos questions, vous guider dans vos choix et vous assurer un service irréprochable.</p>
+                    <p>Contactez-nous dès aujourd'hui pour découvrir comment les Ets Franchini peuvent contribuer au succès de votre exploitation !</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script>
+        // Coordonnées de la concession
+        const destinationCoords = [44.988699190507205, 5.1035036237241105];
+        const destinationAddress = "111 av des monts du matin, 26300 Marches";
+
+        // Initialisation de la carte
+        const map = L.map('map').setView(destinationCoords, 15);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+
+        // Marqueur de la concession
+        const marker = L.marker(destinationCoords).addTo(map);
+        marker.bindPopup(`
+            <b>Franchini SARL</b><br>
+            111 av des monts du matin<br>
+            26300 Marches<br>
+            <a href="https://maps.app.goo.gl/FtHrDhjkSmq5tMdg6" target="_blank">Voir sur Google Maps</a>
+        `).openPopup();
+
+        // Fonction pour calculer l'itinéraire
+        function calculateRoute() {
+            const startAddress = document.getElementById('startAddress').value;
+            if (!startAddress) {
+                alert('Veuillez entrer une adresse de départ');
+                return;
+            }
+
+            // Créer l'URL pour Google Maps avec l'itinéraire
+            const googleMapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(destinationAddress)}&origin=${encodeURIComponent(startAddress)}`;
+            
+            // Ouvrir Google Maps dans un nouvel onglet
+            window.open(googleMapsUrl, '_blank');
+        }
+
+        // Empêcher la soumission du formulaire
+        document.getElementById('routeForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            calculateRoute();
+        });
+    </script>
+
+    <footer class="main-footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-info">
+                    <h4><a href="contact.html" style="color: #4CAF50; text-decoration: none;">FRANCHINI</a></h4>
+                    <p>111 av des monts du matin</p>
+                    <p>26300 Marches</p>
+                    <p>Tél : 04 75 47 40 37</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Franchini SARL. Tous droits réservés. <a href="connexion-prive.html" class="footer-intranet"><i class="fas fa-lock"></i> Connexion privée</a></p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html> 

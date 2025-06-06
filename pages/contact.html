@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact - Franchini</title>
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <style>
+    /* Style du logo */
+    .logo-link {
+        text-decoration: none;
+        position: relative;
+        display: block;
+    }
+
+    .logo-text {
+        font-family: Arial, sans-serif;
+        font-size: 32px;
+        font-weight: bold;
+        color: #333;
+        letter-spacing: 1px;
+        position: relative;
+    }
+
+    .logo {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        gap: 20px;
+    }
+
+    .header-social {
+        display: flex;
+        gap: 15px;
+        align-items: center;
+    }
+
+    .header-social .social-icon {
+        color: #888;
+        font-size: 20px;
+        transition: color 0.3s, transform 0.3s;
+        opacity: 0.7;
+    }
+
+    .header-social .social-icon:hover {
+        color: #3D6AA2;
+        transform: translateY(-2px);
+        opacity: 1;
+    }
+
+    @media (max-width: 768px) {
+        .logo-text {
+            font-size: 24px;
+        }
+    }
+    </style>
+</head>
+<body>
+    <header class="main-header">
+        <div class="container">
+            <div class="logo">
+                <a href="../index.html" class="logo-link">
+                    <div class="logo-text">FRANCHINI</div>
+                </a>
+                <div class="header-social">
+                    <a href="https://www.facebook.com/franchinimarches" target="_blank" class="social-icon">
+                        <i class="fab fa-facebook-f"></i>
+                    </a>
+                    <a href="https://www.instagram.com/franchini_deutzfahr" target="_blank" class="social-icon">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                </div>
+            </div>
+            <nav class="main-nav">
+                <ul>
+                    <li class="dropdown">
+                        <a href="concession.html">La concession</a>
+                    </li>
+                    <li class="dropdown">
+                        <a href="#">Matériel neuf</a>
+                        <div class="dropdown-content">
+                            <a href="materiel.html">Matériel neuf</a>
+                            <a href="materiel-disponible.html">Matériel neuf disponible</a>
+                        </div>
+                    </li>
+                    <li><a href="location.html">Location</a></li>
+                    <li><a href="occasion.html">Occasion</a></li>
+                    <li><a href="magasin.html">Magasin</a></li>
+                    <li><a href="contact.html" class="active">Contact</a></li>
+                    <li><a href="tel:0475474037" class="phone-number"><i class="fas fa-phone"></i> 04 75 47 40 37</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <section class="page-header">
+            <div class="container">
+                <h1>Contactez-nous</h1>
+            </div>
+        </section>
+
+        <section class="contact-section">
+            <div class="container">
+                <div class="contact-form-container">
+                    <form id="contactForm" class="contact-form">
+                        <div class="form-group">
+                            <label for="service">Service à contacter *</label>
+                            <select id="service" name="service" required>
+                                <option value="">Sélectionnez un service</option>
+                                <option value="commerce">Commercial</option>
+                                <option value="magasin">Magasin</option>
+                                <option value="sav">SAV</option>
+                                <option value="comptabilite">Comptabilité</option>
+                                <option value="candidature">Candidature</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="name">Nom et Prénom *</label>
+                            <input type="text" id="name" name="name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="company">Société</label>
+                            <input type="text" id="company" name="company" placeholder="Nom de votre entreprise">
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email *</label>
+                            <input type="email" id="email" name="email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="phone">Téléphone</label>
+                            <input type="tel" id="phone" name="phone">
+                        </div>
+                        <div class="form-group">
+                            <label for="message">Message *</label>
+                            <textarea id="message" name="message" rows="5" required></textarea>
+                        </div>
+                        <div class="form-group" id="fichiers-candidature" style="display: none;">
+                            <label for="candidature-fichiers">Pièces jointes (CV, lettre de motivation...)</label>
+                            <input type="file" id="candidature-fichiers" name="fichiers" multiple accept=".pdf,.doc,.docx">
+                            <small class="file-info">Formats acceptés : PDF, DOC, DOCX (max. 10 Mo)</small>
+                        </div>
+                        <div class="form-group">
+                            <button type="submit" class="btn-submit">Envoyer le message</button>
+                        </div>
+                    </form>
+                    <div class="contact-info-sidebar">
+                        <div class="contact-card">
+                            <h3>Commercial</h3>
+                            <p><i class="fas fa-phone"></i> 04 75 73 52 82</p>
+                            <p><i class="fas fa-envelope"></i> commerce@franchini-agri.fr</p>
+                        </div>
+                        <div class="contact-card">
+                            <h3>Magasin</h3>
+                            <p><i class="fas fa-phone"></i> 04 75 73 52 80</p>
+                            <p><i class="fas fa-envelope"></i> magasin@franchini-agri.fr</p>
+                        </div>
+                        <div class="contact-card">
+                            <h3>SAV</h3>
+                            <p><i class="fas fa-phone"></i> 04 75 73 52 81</p>
+                            <p><i class="fas fa-envelope"></i> sav@franchini-agri.fr</p>
+                        </div>
+                        <div class="contact-card">
+                            <h3>Comptabilité</h3>
+                            <p><i class="fas fa-phone"></i> 04 75 47 40 37</p>
+                            <p><i class="fas fa-envelope"></i> comptabilite@franchini-agri.fr</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div id="map" style="height: 400px; width: 100%;"></div>
+    </main>
+
+
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script>
+        // Coordonnées de la concession
+        const destinationCoords = [44.988699190507205, 5.1035036237241105];
+
+        // Initialisation de la carte
+        const map = L.map('map').setView(destinationCoords, 15);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+
+        // Marqueur de la concession
+        const marker = L.marker(destinationCoords).addTo(map);
+        marker.bindPopup(`
+            <b>Franchini SARL</b><br>
+            111 av des monts du matin<br>
+            26300 Marches<br>
+            <a href="https://maps.app.goo.gl/FtHrDhjkSmq5tMdg6" target="_blank">Voir sur Google Maps</a>
+        `).openPopup();
+        
+        // Afficher/masquer les champs de candidature en fonction du service sélectionné
+        document.getElementById('service').addEventListener('change', function() {
+            const fichiersDiv = document.getElementById('fichiers-candidature');
+            if (this.value === 'candidature') {
+                fichiersDiv.style.display = 'block';
+            } else {
+                fichiersDiv.style.display = 'none';
+            }
+        });
+        
+        // Limiter la taille des fichiers à 10Mo
+        document.getElementById('candidature-fichiers').addEventListener('change', function() {
+            const maxSize = 10 * 1024 * 1024; // 10 Mo en octets
+            let totalSize = 0;
+            
+            for (let i = 0; i < this.files.length; i++) {
+                totalSize += this.files[i].size;
+            }
+            
+            if (totalSize > maxSize) {
+                alert('La taille totale des fichiers ne doit pas dépasser 10 Mo.');
+                this.value = ''; // Réinitialiser le champ de fichier
+            }
+        });
+    </script>
+
+    <footer class="main-footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-info">
+                    <h4><a href="../index.html" style="color: #4CAF50; text-decoration: none;">FRANCHINI</a></h4>
+                    <p>111 av des monts du matin</p>
+                    <p>26300 Marches</p>
+                    <p>Tél : 04 75 47 40 37</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Franchini SARL. Tous droits réservés. <a href="connexion-prive.html" class="footer-intranet"><i class="fas fa-lock"></i> Connexion privée</a></p>
+            </div>
+        </div>
+    </footer>
+    
+    <style>
+    .main-footer {
+        background-color: #333;
+        color: white;
+        padding: 10px 0;
+        text-align: center;
+        font-size: 12px;
+    }
+    
+    .footer-content {
+        padding: 10px 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .footer-info {
+        text-align: center;
+        width: 100%;
+    }
+    
+    .footer-info h4 {
+        margin: 0 0 5px 0;
+        font-size: 16px;
+    }
+    
+    .footer-info p {
+        margin: 2px 0;
+        font-size: 12px;
+        text-align: center;
+    }
+    
+    .footer-bottom {
+        border-top: 1px solid #444;
+        padding-top: 8px;
+        margin-top: 8px;
+        font-size: 11px;
+        width: 100%;
+    }
+    
+    .footer-intranet {
+        color: #999;
+        text-decoration: none;
+    }
+    
+    .footer-intranet:hover {
+        color: #4CAF50;
+    }
+    </style>
+</body>
+</html> 

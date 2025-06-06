@@ -1,0 +1,1063 @@
+/* Variables pour les couleurs */
+:root {
+    --deutz-green: #00963F;
+    --deutz-dark: #333333;
+    --deutz-light: #F5F5F5;
+    --deutz-white: #FFFFFF;
+    --deutz-accent: #E31E24;
+    --transition: 0.3s ease;
+}
+
+/* Reset CSS basique */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Roboto', sans-serif;
+    line-height: 1.6;
+    color: var(--deutz-dark);
+    background-color: var(--deutz-white);
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* Header */
+.main-header {
+    background-color: var(--deutz-white);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    position: fixed;
+    width: 100%;
+    top: 0;
+    z-index: 1000;
+}
+
+.main-header .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 80px;
+}
+
+.logo-img {
+    height: 60px;
+    width: auto;
+}
+
+.main-nav ul {
+    display: flex;
+    list-style: none;
+    gap: 30px;
+}
+
+.main-nav a {
+    color: var(--deutz-dark);
+    text-decoration: none;
+    font-weight: 500;
+    transition: var(--transition);
+    padding: 5px 0;
+    position: relative;
+}
+
+.main-nav a:hover {
+    color: var(--deutz-green);
+}
+
+.main-nav .dropdown {
+    position: relative;
+}
+
+.main-nav .dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    min-width: 220px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+    border-radius: 4px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.main-nav .dropdown-content a {
+    color: #333;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+    text-align: left;
+    transition: background-color 0.2s;
+    font-size: 14px;
+}
+
+.main-nav .dropdown-content a:hover {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.main-nav .dropdown:hover .dropdown-content {
+    display: block;
+    animation: fadeIn 0.3s;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Dropdown Menu */
+.dropdown {
+    position: relative;
+}
+
+.dropdown-menu {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background: var(--deutz-white);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    min-width: 250px;
+    border-radius: 4px;
+    padding: 10px 0;
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s ease, visibility 0.2s ease;
+}
+
+.dropdown-category {
+    border-bottom: 1px solid rgba(0,0,0,0.1);
+    padding: 10px 0;
+}
+
+.dropdown-category:last-child {
+    border-bottom: none;
+}
+
+.category-title {
+    display: block;
+    padding: 8px 20px;
+    font-weight: 600;
+    color: var(--deutz-green);
+    text-transform: uppercase;
+    font-size: 0.9em;
+    letter-spacing: 0.5px;
+}
+
+.category-items {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.category-items li a {
+    padding: 8px 20px 8px 40px;
+}
+
+.dropdown:hover > .dropdown-menu {
+    display: block;
+    opacity: 1;
+    visibility: visible;
+}
+
+.dropdown-menu:hover {
+    display: block;
+    opacity: 1;
+    visibility: visible;
+}
+
+.dropdown-menu li {
+    position: relative;
+}
+
+.dropdown-menu li a {
+    padding: 12px 20px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    color: var(--deutz-dark);
+    transition: background-color 0.3s ease;
+    white-space: nowrap;
+    min-height: 48px;
+}
+
+.dropdown-menu li a:hover {
+    background-color: var(--deutz-light);
+    text-decoration: none;
+}
+
+.brand-logo {
+    height: 24px;
+    width: auto;
+    object-fit: contain;
+    margin-right: 10px;
+    vertical-align: middle;
+}
+
+/* Style spécifique pour le logo Corbins */
+img[src*="Corbins-logo"] {
+    height: 16px;
+    transform: translateY(-1px);
+}
+
+.dropdown-menu li a span {
+    display: inline-block;
+    line-height: 24px;
+}
+
+/* Phone Number */
+.phone-number {
+    color: var(--deutz-green) !important;
+    font-weight: bold !important;
+}
+
+.phone-number i {
+    margin-right: 5px;
+}
+
+/* Hero Section avec Parallaxe */
+.hero-section {
+    position: relative;
+    height: 80vh;
+    margin-top: 80px;
+    background: none;
+    overflow: hidden;
+}
+
+.hero-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background: linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.2)), url('hoge-res--3600.jpg') no-repeat center center;
+    background-size: cover;
+    z-index: -1;
+}
+
+.hero-content {
+    position: relative;
+    z-index: 1;
+    color: var(--deutz-white);
+    max-width: 600px;
+    padding-top: 100px;
+}
+
+.hero-content h1 {
+    font-size: 3.5em;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+}
+
+.weather-widget {
+    position: absolute;
+    bottom: 40px;
+    right: 40px;
+    width: 300px;
+    background: rgba(0, 0, 0, 0.7);
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+    padding: 15px;
+}
+
+.weather-widget h3 {
+    color: var(--deutz-dark);
+    margin-bottom: 15px;
+    text-align: center;
+    font-size: 1.2em;
+}
+
+#weather-container {
+    width: 100%;
+}
+
+/* Section Actualités et Météo */
+.news-section {
+    background-color: var(--deutz-white);
+    padding: 80px 0;
+    position: relative;
+    z-index: 2;
+}
+
+.news-container {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 40px;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.news-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 30px;
+}
+
+.news-card {
+    background: var(--deutz-white);
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease;
+}
+
+.news-card:hover {
+    transform: translateY(-5px);
+}
+
+.news-card .news-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+}
+
+.news-image {
+    height: 200px;
+    overflow: hidden;
+}
+
+.news-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.news-card:hover .news-image img {
+    transform: scale(1.05);
+}
+
+.news-content {
+    padding: 20px;
+}
+
+.news-content h3 {
+    color: var(--deutz-dark);
+    margin-bottom: 10px;
+    font-size: 1.2em;
+}
+
+.news-date {
+    color: #666;
+    font-size: 0.9em;
+    margin-bottom: 10px;
+}
+
+.weather-sidebar {
+    background: var(--deutz-white);
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    position: sticky;
+    top: 100px;
+}
+
+@media (max-width: 1024px) {
+    .news-container {
+        grid-template-columns: 1fr;
+    }
+
+    .news-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .weather-sidebar {
+        position: static;
+        margin-top: 30px;
+    }
+}
+
+@media (max-width: 768px) {
+    .hero-section {
+        height: 60vh;
+    }
+
+    .hero-content {
+        text-align: center;
+        padding-top: 60px;
+    }
+}
+
+/* Concession Section */
+.concession-section {
+    padding: 80px 0;
+    background-color: var(--deutz-light);
+}
+
+.concession-info {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    margin-top: 40px;
+}
+
+.info-box {
+    background: var(--deutz-white);
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.info-box h3 {
+    color: var(--deutz-green);
+    margin-bottom: 20px;
+}
+
+.contact-info {
+    margin-top: 30px;
+}
+
+.contact-info p {
+    margin: 10px 0;
+}
+
+.contact-info i {
+    color: var(--deutz-green);
+    margin-right: 10px;
+}
+
+/* Map */
+.location-map {
+    height: 400px;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+/* Footer */
+.main-footer {
+    background-color: var(--deutz-dark);
+    color: var(--deutz-white);
+    padding: 60px 0 20px;
+}
+
+.footer-content {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 40px;
+    margin-bottom: 40px;
+}
+
+.footer-info h4,
+.footer-links h4 {
+    color: var(--deutz-green);
+    margin-bottom: 20px;
+}
+
+.footer-links ul {
+    list-style: none;
+}
+
+.footer-links a {
+    color: var(--deutz-white);
+    text-decoration: none;
+    padding: 5px 0;
+    display: inline-block;
+    transition: var(--transition);
+}
+
+.footer-links a:hover {
+    color: var(--deutz-green);
+}
+
+.footer-bottom {
+    border-top: 1px solid rgba(255,255,255,0.1);
+    padding-top: 20px;
+    text-align: center;
+    font-size: 0.9em;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .main-header .container {
+        flex-direction: column;
+        height: auto;
+        padding: 20px;
+    }
+
+    .main-nav ul {
+        flex-direction: column;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .dropdown-menu {
+        position: static;
+        width: 100%;
+        box-shadow: none;
+        background: var(--deutz-light);
+        margin-top: 10px;
+    }
+
+    .brand-logo {
+        height: 20px;
+    }
+
+    .concession-info {
+        grid-template-columns: 1fr;
+    }
+
+    .hero-section {
+        height: 50vh;
+        margin-top: 120px;
+    }
+
+    .hero-section h1 {
+        font-size: 2.5em;
+    }
+
+    .footer-content {
+        grid-template-columns: 1fr;
+        text-align: center;
+    }
+
+    .logo-text {
+        font-size: 2em;
+        letter-spacing: 2px;
+    }
+    
+    img[src*="Corbins-logo"] {
+        height: 14px;
+    }
+}
+
+/* Logo - Style de base avec trait vert */
+.logo-text {
+    font-size: 2.8em;
+    font-weight: 900;
+    color: var(--deutz-dark);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    font-family: 'Roboto', sans-serif;
+    position: relative;
+    padding: 5px 0;
+    display: inline-block;
+    text-decoration: none !important;
+}
+
+.logo a {
+    text-decoration: none !important;
+}
+
+/* Barre verte sous le logo */
+.logo-text::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background-color: var(--deutz-green);
+    transform: scaleX(0.7);
+    transition: transform 0.3s ease;
+}
+
+/* Icônes des réseaux sociaux - Animations désactivées */
+.header-social .social-icon,
+.header-social .social-icon:hover,
+.header-social .social-icon:active,
+.header-social .social-icon:focus {
+    color: #888 !important;
+    font-size: 20px;
+    opacity: 0.7;
+    transform: none !important;
+    transition: none !important;
+    text-decoration: none !important;
+}
+
+/* Grille des sections principales */
+.sections-grid {
+    padding: 2rem 0;
+    background-color: #f5f5f5;
+}
+
+.grid-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.news-section,
+.occasions-section {
+    background: white;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+@media (max-width: 1024px) {
+    .grid-container {
+        grid-template-columns: 1fr;
+        padding: 0 1rem;
+    }
+    
+    .news-section,
+    .occasions-section {
+        margin-bottom: 2rem;
+    }
+}
+
+/* Désactivation de tous les états du logo */
+.logo-text:hover,
+.logo-text:active,
+.logo-text:focus,
+.logo a:hover .logo-text,
+.logo a:active .logo-text,
+.logo a:focus .logo-text {
+    color: var(--deutz-dark) !important;
+    transform: none !important;
+    text-decoration: none !important;
+    outline: none !important;
+}
+
+/* Calculateur d'itinéraire */
+.route-calculator {
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(0,0,0,0.1);
+}
+
+.route-form {
+    margin-top: 15px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+#startAddress {
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+    width: 100%;
+}
+
+.btn-route {
+    background-color: var(--deutz-green);
+    color: var(--deutz-white);
+    padding: 12px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background-color 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+    text-align: center;
+}
+
+.btn-route:hover {
+    background-color: var(--deutz-dark);
+}
+
+.route-instructions {
+    margin-top: 20px;
+}
+
+.route-result {
+    background-color: var(--deutz-light);
+    padding: 15px;
+    border-radius: 4px;
+    margin-top: 15px;
+}
+
+.route-result p {
+    margin-bottom: 10px;
+}
+
+.error {
+    color: #dc3545;
+    margin-top: 10px;
+}
+
+@media (max-width: 768px) {
+    .form-group {
+        flex-direction: column;
+    }
+    
+    .btn-route {
+        width: 100%;
+    }
+}
+
+/* Section Contact */
+.contact-section {
+    padding: 80px 0;
+    background-color: var(--deutz-light);
+    margin-top: 80px;
+}
+
+.contact-form-container {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 40px;
+    margin-top: 40px;
+}
+
+.contact-form {
+    background-color: var(--deutz-white);
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.contact-form .form-group {
+    margin-bottom: 20px;
+}
+
+.contact-form label {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--deutz-dark);
+    font-weight: 500;
+}
+
+.contact-form input,
+.contact-form select,
+.contact-form textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+    font-family: 'Roboto', sans-serif;
+}
+
+.contact-form textarea {
+    resize: vertical;
+    min-height: 120px;
+}
+
+.contact-form .btn-submit {
+    background-color: var(--deutz-green);
+    color: var(--deutz-white);
+    padding: 12px 30px;
+    border: none;
+    border-radius: 4px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    width: 100%;
+}
+
+.contact-form .btn-submit:hover {
+    background-color: var(--deutz-dark);
+}
+
+.contact-info-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.contact-card {
+    background-color: var(--deutz-white);
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.contact-card h3 {
+    color: var(--deutz-green);
+    margin-bottom: 15px;
+    font-size: 1.2rem;
+}
+
+.contact-card p {
+    margin: 8px 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.contact-card i {
+    color: var(--deutz-green);
+    width: 20px;
+}
+
+/* Styles responsifs pour le formulaire de contact */
+@media (max-width: 768px) {
+    .contact-form-container {
+        grid-template-columns: 1fr;
+    }
+
+    .contact-info-sidebar {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+    }
+}
+
+/* Section Candidature */
+.candidature-section {
+    padding: 80px 0;
+    background-color: var(--deutz-light);
+    margin-top: 80px;
+}
+
+.candidature-form-container {
+    max-width: 800px;
+    margin: 40px auto 0;
+}
+
+.candidature-form {
+    background-color: var(--deutz-white);
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.candidature-form .form-group {
+    margin-bottom: 20px;
+}
+
+.candidature-form label {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--deutz-dark);
+    font-weight: 500;
+}
+
+.candidature-form input[type="file"] {
+    padding: 10px 0;
+}
+
+.file-info {
+    display: block;
+    margin-top: 5px;
+    color: #666;
+    font-size: 0.9em;
+}
+
+.candidature-form input,
+.candidature-form textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+    font-family: 'Roboto', sans-serif;
+}
+
+.candidature-form textarea {
+    resize: vertical;
+    min-height: 120px;
+}
+
+.candidature-form .btn-submit {
+    background-color: var(--deutz-green);
+    color: var(--deutz-white);
+    padding: 12px 30px;
+    border: none;
+    border-radius: 4px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    width: 100%;
+}
+
+.candidature-form .btn-submit:hover {
+    background-color: var(--deutz-dark);
+}
+
+@media (max-width: 768px) {
+    .candidature-form-container {
+        padding: 0 20px;
+    }
+}
+
+/* Page Matériel */
+.materiel-section {
+    padding: 60px 0;
+}
+
+.category-section {
+    margin-bottom: 60px;
+}
+
+.category-section h2 {
+    color: var(--deutz-green);
+    margin-bottom: 30px;
+    font-size: 2em;
+    position: relative;
+    padding-bottom: 10px;
+}
+
+.category-section h2::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 60px;
+    height: 3px;
+    background-color: var(--deutz-green);
+}
+
+.brand-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 30px;
+    margin-top: 30px;
+}
+
+.brand-card {
+    background: var(--deutz-white);
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    text-decoration: none;
+    color: var(--deutz-dark);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.brand-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+.brand-card img {
+    height: 60px;
+    width: auto;
+    margin-bottom: 15px;
+    object-fit: contain;
+}
+
+.brand-card span {
+    font-weight: 500;
+    text-align: center;
+}
+
+/* Page Header */
+.page-header {
+    background-color: var(--deutz-light);
+    padding: 40px 0;
+    margin-top: 80px;
+}
+
+.page-header h1 {
+    color: var(--deutz-dark);
+    font-size: 2.5em;
+    margin: 0;
+}
+
+@media (max-width: 768px) {
+    .brand-grid {
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 20px;
+    }
+
+    .brand-card {
+        padding: 15px;
+    }
+
+    .brand-card img {
+        height: 40px;
+    }
+}
+
+/* Styles pour le diaporama */
+.slideshow-container {
+    position: relative;
+    width: 100%;
+    height: 600px;
+    overflow: hidden;
+}
+
+.slide {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    transition: opacity 2s ease-in-out;
+}
+
+.slide.active {
+    opacity: 1;
+}
+
+.slide img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.dots-container {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+    z-index: 2;
+}
+
+.dot {
+    height: 12px;
+    width: 12px;
+    margin: 0 5px;
+    background-color: rgba(255, 255, 255, 0.5);
+    border-radius: 50%;
+    display: inline-block;
+    transition: background-color 0.6s ease;
+    cursor: pointer;
+    border: 2px solid white;
+}
+
+.dot.active {
+    background-color: white;
+}
+
+.hero-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    color: white;
+    z-index: 1;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+/* Style pour le lien Intranet */
+.intranet-link {
+    background-color: var(--deutz-dark);
+    color: white !important;
+    padding: 8px 15px !important;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+}
+
+.intranet-link:hover {
+    background-color: var(--deutz-green);
+    color: white !important;
+}
+
+.intranet-link i {
+    margin-right: 5px;
+}
+
+.footer-intranet {
+    color: var(--deutz-white);
+    text-decoration: none;
+    margin-left: 15px;
+}
+
+.footer-intranet:hover {
+    color: var(--deutz-green);
+}

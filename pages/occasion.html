@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Occasions - Franchini</title>
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/footer-style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* Style du logo */
+        .logo-link {
+            text-decoration: none;
+            position: relative;
+            display: block;
+        }
+
+        .logo-text {
+            font-family: Arial, sans-serif;
+            font-size: 32px;
+            font-weight: bold;
+            color: #333;
+            letter-spacing: 1px;
+            position: relative;
+        }
+
+        .logo-subtext {
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+            color: #4CAF50;
+            margin-top: 2px;
+            letter-spacing: 0.5px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            gap: 20px;
+        }
+
+        .header-social {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .header-social .social-icon {
+            color: #888;
+            font-size: 20px;
+            transition: color 0.3s, transform 0.3s;
+            opacity: 0.7;
+        }
+
+        .header-social .social-icon:hover {
+            color: #3D6AA2;
+            transform: translateY(-2px);
+            opacity: 1;
+        }
+
+        .occasions-container {
+            padding: 2rem 0;
+        }
+        
+        .occasions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        
+        .occasion-card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+            overflow: hidden;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .occasion-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+        }
+        
+        .occasion-image {
+            height: 200px;
+            overflow: hidden;
+        }
+        
+        .occasion-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s;
+        }
+        
+        .occasion-card:hover .occasion-image img {
+            transform: scale(1.05);
+        }
+        
+        .occasion-details {
+            padding: 1.5rem;
+        }
+        
+        .occasion-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #333;
+        }
+        
+        .occasion-type {
+            display: inline-block;
+            background-color: #4CAF50;
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            margin-bottom: 1rem;
+        }
+        
+        .occasion-info {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem 1.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .occasion-info-item {
+            display: flex;
+            align-items: center;
+            font-size: 0.9rem;
+            color: #666;
+        }
+        
+        .occasion-info-item i {
+            margin-right: 0.5rem;
+            color: #4CAF50;
+        }
+        
+        .occasion-price {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #4CAF50;
+            margin-top: 1rem;
+        }
+        
+        .occasion-location {
+            display: flex;
+            align-items: center;
+            margin-top: 1rem;
+            font-size: 0.9rem;
+            color: #888;
+        }
+        
+        .occasion-location i {
+            margin-right: 0.5rem;
+        }
+        
+        .occasion-contact {
+            display: inline-block;
+            background-color: #4CAF50;
+            color: white;
+            padding: 0.6rem 1.2rem;
+            border-radius: 4px;
+            text-decoration: none;
+            margin-top: 1rem;
+            transition: background-color 0.3s;
+        }
+        
+        .occasion-contact:hover {
+            background-color: #388e3c;
+        }
+        
+        .filter-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            padding: 1rem;
+            background-color: #f5f5f5;
+            border-radius: 8px;
+        }
+        
+        .filter-select {
+            padding: 0.5rem 1rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: white;
+            min-width: 150px;
+        }
+        
+        .no-occasions {
+            text-align: center;
+            padding: 3rem;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            margin-top: 2rem;
+        }
+        
+        .no-occasions i {
+            font-size: 3rem;
+            color: #ccc;
+            margin-bottom: 1rem;
+        }
+        
+        .no-occasions h3 {
+            color: #666;
+            margin-bottom: 0.5rem;
+        }
+        
+        .no-occasions p {
+            color: #888;
+        }
+        
+        @media (max-width: 768px) {
+            .occasions-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .filter-bar {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="main-header">
+        <div class="container">
+            <div class="logo">
+                <a href="../index.html" class="logo-link">
+                    <div class="logo-text">FRANCHINI</div>
+                </a>
+                <div class="header-social">
+                    <a href="https://www.facebook.com/franchinimarches" target="_blank" class="social-icon">
+                        <i class="fab fa-facebook-f"></i>
+                    </a>
+                    <a href="https://www.instagram.com/franchini_deutzfahr" target="_blank" class="social-icon">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                </div>
+            </div>
+            <nav class="main-nav">
+                <ul>
+                    <li class="dropdown">
+                        <a href="concession.html">La concession</a>
+                    </li>
+                    <li class="dropdown">
+                        <a href="#">Matériel neuf</a>
+                        <div class="dropdown-content">
+                            <a href="materiel.html">Matériel neuf</a>
+                            <a href="materiel-disponible.html">Matériel neuf disponible</a>
+                        </div>
+                    </li>
+                    <li><a href="location.html">Location</a></li>
+                    <li><a href="occasion.html">Occasion</a></li>
+                    <li><a href="magasin.html">Magasin</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                    <li><a href="tel:0475474037" class="phone-number"><i class="fas fa-phone"></i> 04 75 47 40 37</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <section class="page-header">
+            <div class="container">
+                <h1>Nos occasions</h1>
+                <p>Découvrez notre sélection de tracteurs et matériels d'occasion</p>
+            </div>
+        </section>
+
+        <section class="occasions-container">
+            <div class="container">
+                <div class="filter-bar">
+                    <select id="type-filter" class="filter-select">
+                        <option value="all">Tous les types</option>
+                        <option value="tracteur">Tracteurs</option>
+                        <option value="materiel">Matériels</option>
+                    </select>
+                    <select id="sort-filter" class="filter-select">
+                        <option value="recent">Plus récents</option>
+                        <option value="price-asc">Prix croissant</option>
+                        <option value="price-desc">Prix décroissant</option>
+                    </select>
+                </div>
+
+                <div id="occasions-grid" class="occasions-grid">
+                    <!-- Les occasions seront chargées dynamiquement -->
+                </div>
+
+                <div id="no-occasions" class="no-occasions" style="display: none;">
+                    <i class="fas fa-search"></i>
+                    <h3>Aucune occasion disponible pour le moment</h3>
+                    <p>Veuillez revenir ultérieurement ou modifier vos critères de recherche.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="main-footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-info">
+                    <h4><a href="contact.html" style="color: #4CAF50; text-decoration: none;">FRANCHINI</a></h4>
+                    <p>111 av des monts du matin</p>
+                    <p>26300 Marches</p>
+                    <p>Tél : 04 75 47 40 37</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Franchini SARL. Tous droits réservés. <a href="connexion-prive.html" class="footer-intranet"><i class="fas fa-lock"></i> Connexion privée</a></p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Simuler le chargement des occasions depuis l'administration
+            // Dans une implémentation réelle, ces données viendraient d'une base de données
+            const occasionsData = [];
+            
+            // Afficher les occasions ou le message "aucune occasion"
+            function renderOccasions() {
+                const occasionsGrid = document.getElementById('occasions-grid');
+                const noOccasions = document.getElementById('no-occasions');
+                
+                // Filtrer les occasions selon les critères
+                const typeFilter = document.getElementById('type-filter').value;
+                const sortFilter = document.getElementById('sort-filter').value;
+                
+                let filteredOccasions = [...occasionsData];
+                
+                // Appliquer les filtres
+                if (typeFilter !== 'all') {
+                    filteredOccasions = filteredOccasions.filter(item => item.type === typeFilter);
+                }
+                
+                // Appliquer le tri
+                if (sortFilter === 'price-asc') {
+                    filteredOccasions.sort((a, b) => a.prix - b.prix);
+                } else if (sortFilter === 'price-desc') {
+                    filteredOccasions.sort((a, b) => b.prix - a.prix);
+                } else if (sortFilter === 'recent') {
+                    filteredOccasions.sort((a, b) => new Date(b.dateAjout) - new Date(a.dateAjout));
+                }
+                
+                // Afficher les résultats
+                occasionsGrid.innerHTML = '';
+                
+                if (filteredOccasions.length === 0) {
+                    occasionsGrid.style.display = 'none';
+                    noOccasions.style.display = 'block';
+                } else {
+                    occasionsGrid.style.display = 'grid';
+                    noOccasions.style.display = 'none';
+                    
+                    filteredOccasions.forEach(occasion => {
+                        const card = document.createElement('div');
+                        card.className = 'occasion-card';
+                        
+                        let typeLabel = occasion.type === 'tracteur' ? 'Tracteur' : 'Matériel';
+                        
+                        card.innerHTML = `
+                            <div class="occasion-image">
+                                <img src="${occasion.image || '../assets/images/placeholder.jpg'}" alt="${occasion.titre}">
+                            </div>
+                            <div class="occasion-details">
+                                <div class="occasion-type">${typeLabel}</div>
+                                <h3 class="occasion-title">${occasion.titre}</h3>
+                                <div class="occasion-info">
+                                    <div class="occasion-info-item">
+                                        <i class="fas fa-tag"></i>
+                                        <span>${occasion.marque}</span>
+                                    </div>
+                                    ${occasion.annee ? `
+                                    <div class="occasion-info-item">
+                                        <i class="fas fa-calendar-alt"></i>
+                                        <span>${occasion.annee}</span>
+                                    </div>` : ''}
+                                    ${occasion.heures ? `
+                                    <div class="occasion-info-item">
+                                        <i class="fas fa-clock"></i>
+                                        <span>${occasion.heures} heures</span>
+                                    </div>` : ''}
+                                    ${occasion.puissance ? `
+                                    <div class="occasion-info-item">
+                                        <i class="fas fa-tachometer-alt"></i>
+                                        <span>${occasion.puissance} CV</span>
+                                    </div>` : ''}
+                                </div>
+                                <div class="occasion-price">${occasion.prix.toLocaleString()} €</div>
+                                <div class="occasion-location">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                    <span>Disponible à Marches (26)</span>
+                                </div>
+                                <a href="contact.html" class="occasion-contact">
+                                    <i class="fas fa-envelope"></i>
+                                    Nous contacter
+                                </a>
+                            </div>
+                        `;
+                        
+                        occasionsGrid.appendChild(card);
+                    });
+                }
+            }
+            
+            // Événements de filtrage
+            document.getElementById('type-filter').addEventListener('change', renderOccasions);
+            document.getElementById('sort-filter').addEventListener('change', renderOccasions);
+            
+            // Afficher les occasions au chargement de la page
+            renderOccasions();
+        });
+    </script>
+</body>
+</html>

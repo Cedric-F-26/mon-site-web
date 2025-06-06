@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Candidature - Franchini</title>
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/css/footer-style.css">
+    <style>
+    /* Style du logo */
+    .logo-link {
+        text-decoration: none;
+        position: relative;
+        display: block;
+    }
+
+    .logo-text {
+        font-family: Arial, sans-serif;
+        font-size: 32px;
+        font-weight: bold;
+        color: #333;
+        letter-spacing: 1px;
+        position: relative;
+    }
+
+    .logo {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        gap: 20px;
+    }
+
+    .header-social {
+        display: flex;
+        gap: 15px;
+        align-items: center;
+    }
+
+    .header-social .social-icon {
+        color: #888;
+        font-size: 20px;
+        transition: color 0.3s, transform 0.3s;
+        opacity: 0.7;
+    }
+
+    .header-social .social-icon:hover {
+        color: #3D6AA2;
+        transform: translateY(-2px);
+        opacity: 1;
+    }
+
+    @media (max-width: 768px) {
+        .logo-text {
+            font-size: 24px;
+        }
+    }
+    </style>
+</head>
+<body>
+    <header class="main-header">
+        <div class="container">
+            <div class="logo">
+                <a href="../index.html" class="logo-link">
+                    <div class="logo-text">FRANCHINI</div>
+                </a>
+                <div class="header-social">
+                    <a href="https://www.facebook.com/franchinimarches" target="_blank" class="social-icon">
+                        <i class="fab fa-facebook-f"></i>
+                    </a>
+                    <a href="https://www.instagram.com/franchini_deutzfahr" target="_blank" class="social-icon">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                </div>
+            </div>
+            <nav class="main-nav">
+                <ul>
+                    <li class="dropdown">
+                        <a href="concession.html">La concession</a>
+                    </li>
+                    <li class="dropdown">
+                        <a href="materiel.html">Matériel neuf</a>
+                    </li>
+                    <li><a href="https://www.agriaffaires.com/pros/list/22624-0/1/franchini-sarl.html" target="_blank">Occasion</a></li>
+                    <li><a href="magasin.html">Magasin</a></li>
+                    <li><a href="candidature.html" class="active">Candidature</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                    <li><a href="tel:0475474037" class="phone-number"><i class="fas fa-phone"></i> 04 75 47 40 37</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <section class="page-header">
+            <div class="container">
+                <h1>Candidature</h1>
+            </div>
+        </section>
+
+        <section class="candidature-section">
+            <div class="container">
+                <div class="candidature-form-container">
+                    <form id="candidatureForm" class="candidature-form" enctype="multipart/form-data">
+                        <div class="form-group">
+                            <label for="candidature-nom">Nom *</label>
+                            <input type="text" id="candidature-nom" name="nom" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="candidature-prenom">Prénom *</label>
+                            <input type="text" id="candidature-prenom" name="prenom" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="candidature-tel">Numéro de téléphone *</label>
+                            <input type="tel" id="candidature-tel" name="telephone" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="candidature-email">Adresse email *</label>
+                            <input type="email" id="candidature-email" name="email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="candidature-message">Message</label>
+                            <textarea id="candidature-message" name="message" rows="5"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="candidature-fichiers">Pièces jointes (CV, lettre de motivation...)</label>
+                            <input type="file" id="candidature-fichiers" name="fichiers" multiple accept=".pdf,.doc,.docx">
+                            <small class="file-info">Formats acceptés : PDF, DOC, DOCX</small>
+                        </div>
+                        <div class="form-group">
+                            <button type="submit" class="btn-submit">Envoyer la candidature</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="main-footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-info">
+                    <h4><a href="contact.html" style="color: #4CAF50; text-decoration: none;">FRANCHINI</a></h4>
+                    <p style="text-align: center;">111 av des monts du matin</p>
+                    <p style="text-align: center;">26300 Marches</p>
+                    <p style="text-align: center;">Tél : 04 75 47 40 37</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p style="text-align: center;">&copy; 2024 Franchini SARL. Tous droits réservés. <a href="../admin/index.php" class="footer-intranet"><i class="fas fa-lock"></i> Intranet</a></p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

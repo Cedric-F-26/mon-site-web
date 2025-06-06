@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Réinitialisation du mot de passe - Franchini</title>
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/footer-style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif; /* Fallback font */
+        }
+        .login-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 70vh;
+            padding: 2rem 0;
+        }
+        
+        .login-box {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            padding: 2rem;
+            width: 100%;
+            max-width: 450px; /* Slightly wider for more text */
+        }
+        
+        .login-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .login-header i {
+            font-size: 3rem;
+            color: #4CAF50;
+            margin-bottom: 1rem;
+            display: block;
+        }
+        
+        .login-header h1 {
+            color: #333;
+            font-size: 1.8rem;
+            margin: 0;
+        }
+
+        .login-header p {
+            color: #666;
+            font-size: 0.95rem;
+            margin-top: 0.5rem;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #555;
+            font-weight: 500;
+        }
+        
+        .form-group label i {
+            margin-right: 0.5rem;
+            color: #4CAF50;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+        
+        .form-group input:focus {
+            border-color: #4CAF50;
+            outline: none;
+        }
+        
+        .btn-submit {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 0.8rem 1.5rem;
+            font-size: 1rem;
+            cursor: pointer;
+            width: 100%;
+            transition: background-color 0.3s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .btn-submit i {
+            margin-right: 0.5rem;
+        }
+        
+        .btn-submit:hover {
+            background-color: #388e3c;
+        }
+        
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 1.5rem;
+            color: #666;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.3s;
+        }
+        
+        .back-link i {
+            margin-right: 0.3rem;
+        }
+        
+        .back-link:hover {
+            color: #4CAF50;
+        }
+
+        .message {
+            padding: 1rem;
+            border-radius: 4px;
+            margin-bottom: 1.5rem;
+            display: none; /* Hidden by default */
+            align-items: center;
+        }
+        .message.success {
+            background-color: #e8f5e9; /* Light green */
+            color: #2e7d32; /* Dark green */
+            border: 1px solid #a5d6a7;
+        }
+        .message.error {
+            background-color: #ffebee; /* Light red */
+            color: #c62828; /* Dark red */
+            border: 1px solid #ef9a9a;
+        }
+        .message i {
+            margin-right: 0.5rem;
+            font-size: 1.2rem;
+        }
+    </style>
+</head>
+<body>
+    <header class="main-header">
+        <div class="container">
+            <div class="logo">
+                <a href="../index.html" class="logo-link">
+                    <div class="logo-text">FRANCHINI</div>
+                </a>
+                <div class="header-social">
+                    <a href="https://www.facebook.com/franchinimarches" target="_blank" class="social-icon">
+                        <i class="fab fa-facebook"></i>
+                    </a>
+                    <a href="https://www.instagram.com/franchini_deutzfahr" target="_blank" class="social-icon">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                </div>
+            </div>
+            <nav class="main-nav">
+                <ul>
+                    <li class="dropdown">
+                        <a href="concession.html">La concession</a>
+                    </li>
+                    <li class="dropdown">
+                        <a href="#">Matériel neuf</a>
+                        <div class="dropdown-content">
+                            <a href="materiel.html">Matériel neuf</a>
+                            <a href="materiel-disponible.html">Matériel neuf disponible</a>
+                        </div>
+                    </li>
+                    <li><a href="location.html">Location</a></li>
+                    <li><a href="occasion.html">Occasion</a></li>
+                    <li><a href="magasin.html">Magasin</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                    <li><a href="tel:0475474037" class="phone-number"><i class="fas fa-phone"></i> 04 75 47 40 37</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="login-container">
+            <div class="login-box">
+                <div class="login-header">
+                    <i class="fas fa-envelope-open-text"></i>
+                    <h1>Mot de passe oublié ?</h1>
+                    <p>Entrez votre adresse e-mail ci-dessous. Si un compte est associé à cet e-mail, nous vous enverrons un lien pour réinitialiser votre mot de passe.</p>
+                </div>
+
+                <div id="response-message" class="message" style="display: none;">
+                    <i class="fas"></i> <!-- Icon will be set by JS -->
+                    <span></span> <!-- Message content will be set by JS -->
+                </div>
+
+                <form id="reset-request-form" class="login-form">
+                    <div class="form-group">
+                        <label for="email">
+                            <i class="fas fa-at"></i>
+                            Adresse e-mail
+                        </label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+                    <button type="submit" class="btn-submit">
+                        <i class="fas fa-paper-plane"></i>
+                        Envoyer le lien de réinitialisation
+                    </button>
+                </form>
+                
+                <a href="connexion-prive.html" class="back-link">
+                    <i class="fas fa-arrow-left"></i>
+                    Retour à la connexion
+                </a>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer-container">
+        <!-- ... Contenu du footer identique à connexion-prive.html ... -->
+        <div class="footer-content">
+            <div class="footer-section about">
+                <h3>FRANCHINI</h3>
+                <p>Votre partenaire de confiance pour le matériel agricole. Nous offrons une large gamme de produits neufs et d'occasion, ainsi qu'un service de location et un magasin de pièces détachées.</p>
+            </div>
+            <div class="footer-section links">
+                <h3>Liens rapides</h3>
+                <ul>
+                    <li><a href="../index.html">Accueil</a></li>
+                    <li><a href="concession.html">La concession</a></li>
+                    <li><a href="materiel.html">Matériel neuf</a></li>
+                    <li><a href="occasion.html">Occasion</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                </ul>
+            </div>
+            <div class="footer-section contact-info">
+                <h3>Contactez-nous</h3>
+                <p><i class="fas fa-map-marker-alt"></i> Z.A. Les Payots, 26300 Marches</p>
+                <p><i class="fas fa-phone"></i> <a href="tel:0475474037">04 75 47 40 37</a></p>
+                <p><i class="fas fa-envelope"></i> <a href="mailto:contact@franchini.fr">contact@franchini.fr</a></p>
+                <div class="social-icons-footer">
+                    <a href="https://www.facebook.com/franchinimarches" target="_blank"><i class="fab fa-facebook-f"></i></a>
+                    <a href="https://www.instagram.com/franchini_deutzfahr" target="_blank"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; <span id="currentYear"></span> Franchini. Tous droits réservés. <a href="mentions-legales.html">Mentions Légales</a> | <a href="politique-confidentialite.html">Politique de confidentialité</a></p>
+        </div>
+    </footer>
+
+    <script>
+        document.getElementById('currentYear').textContent = new Date().getFullYear();
+
+        const resetRequestForm = document.getElementById('reset-request-form');
+        const emailInput = document.getElementById('email');
+        const responseMessageDiv = document.getElementById('response-message');
+        const responseMessageIcon = responseMessageDiv.querySelector('i');
+        const responseMessageSpan = responseMessageDiv.querySelector('span');
+
+        if (resetRequestForm) {
+            resetRequestForm.addEventListener('submit', function(event) {
+                event.preventDefault();
+                const email = emailInput.value;
+
+                // Temporaire: Afficher un message de succès simulé
+                // Plus tard, ici on fera un appel AJAX vers un script PHP
+                responseMessageDiv.className = 'message success'; // Change la classe pour le style
+                responseMessageIcon.className = 'fas fa-check-circle';
+                responseMessageSpan.textContent = 'Si un compte est associé à ' + email + ', un e-mail de réinitialisation a été envoyé. Veuillez vérifier votre boîte de réception (et vos spams).';
+                responseMessageDiv.style.display = 'flex';
+                emailInput.value = ''; // Vider le champ email
+
+                // TODO: Implémenter l'appel AJAX vers le script PHP (par exemple, ../admin/handle_reset_request.php)
+                /*
+                const formData = new FormData();
+                formData.append('email', email);
+
+                const xhr = new XMLHttpRequest();
+                xhr.open('POST', '../admin/handle_reset_request.php', true);
+                xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+
+                xhr.onload = function() {
+                    responseMessageDiv.style.display = 'flex';
+                    if (xhr.status >= 200 && xhr.status < 400) {
+                        try {
+                            const response = JSON.parse(xhr.responseText);
+                            if (response.success) {
+                                responseMessageDiv.className = 'message success';
+                                responseMessageIcon.className = 'fas fa-check-circle';
+                                responseMessageSpan.textContent = response.message || 'Demande traitée. Vérifiez vos e-mails.';
+                                emailInput.value = ''; // Vider le champ email
+                            } else {
+                                responseMessageDiv.className = 'message error';
+                                responseMessageIcon.className = 'fas fa-exclamation-triangle';
+                                responseMessageSpan.textContent = response.message || 'Erreur lors de la demande.';
+                            }
+                        } catch (e) {
+                            responseMessageDiv.className = 'message error';
+                            responseMessageIcon.className = 'fas fa-exclamation-triangle';
+                            responseMessageSpan.textContent = 'Erreur de communication avec le serveur.';
+                        }
+                    } else {
+                        responseMessageDiv.className = 'message error';
+                        responseMessageIcon.className = 'fas fa-exclamation-triangle';
+                        responseMessageSpan.textContent = 'Erreur serveur (' + xhr.status + ').';
+                    }
+                };
+
+                xhr.onerror = function() {
+                    responseMessageDiv.style.display = 'flex';
+                    responseMessageDiv.className = 'message error';
+                    responseMessageIcon.className = 'fas fa-exclamation-triangle';
+                    responseMessageSpan.textContent = 'Erreur réseau.';
+                };
+                xhr.send(formData);
+                */
+            });
+        }
+    </script>
+</body>
+</html>

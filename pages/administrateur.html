@@ -1,0 +1,1404 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administration - Franchini</title>
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        /* Styles généraux */
+        body {
+            font-family: 'Roboto', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+
+        /* Header Admin */
+        .admin-header {
+            background-color: #4CAF50;
+            color: white;
+            padding: 1rem 0;
+            margin-bottom: 2rem;
+        }
+
+        .admin-header h1 {
+            margin: 0;
+            font-size: 1.8rem;
+        }
+
+        .admin-header .user-info {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .admin-header .user-name {
+            font-weight: 500;
+        }
+
+        .admin-header .logout-btn {
+            background-color: rgba(255,255,255,0.2);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            text-decoration: none;
+            font-size: 0.9rem;
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .admin-header .logout-btn i {
+            margin-right: 0.5rem;
+        }
+
+        .admin-header .logout-btn:hover {
+            background-color: rgba(255,255,255,0.3);
+        }
+
+        /* Styles pour le logo et la navigation */
+        .main-header {
+            background-color: #fff;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .main-header .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 80px;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo-text {
+            font-family: Arial, sans-serif;
+            font-size: 32px;
+            font-weight: bold;
+            color: #333;
+            letter-spacing: 1px;
+            position: relative;
+            text-decoration: none;
+        }
+
+        .logo-text::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 50%;
+            transform: translateX(-50%) scaleX(0.7);
+            width: 100%;
+            height: 3px;
+            background-color: #4CAF50;
+        }
+
+        .header-social {
+            display: flex;
+            gap: 15px;
+            margin-left: 20px;
+        }
+
+        .header-social .social-icon {
+            color: #888;
+            font-size: 20px;
+            transition: color 0.3s;
+            opacity: 0.7;
+        }
+
+        .header-social .social-icon:hover {
+            color: #3D6AA2;
+            opacity: 1;
+        }
+
+        .main-nav ul {
+            display: flex;
+            list-style: none;
+            gap: 30px;
+            margin: 0;
+            padding: 0;
+        }
+
+        .main-nav a {
+            color: #333;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+            padding: 5px 0;
+            position: relative;
+        }
+
+        .main-nav a:hover {
+            color: #4CAF50;
+        }
+
+        .phone-number {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: #333;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .phone-number i {
+            color: #4CAF50;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid #ddd;
+            margin-bottom: 2rem;
+        }
+
+        .tab-btn {
+            padding: 1rem 1.5rem;
+            background: none;
+            border: none;
+            border-bottom: 3px solid transparent;
+            cursor: pointer;
+            font-weight: 500;
+            color: #666;
+            transition: all 0.3s;
+        }
+
+        .tab-btn:hover {
+            color: #4CAF50;
+        }
+
+        .tab-btn.active {
+            color: #4CAF50;
+            border-bottom-color: #4CAF50;
+        }
+
+        .tab-btn i {
+            margin-right: 0.5rem;
+        }
+
+        /* Tab Content */
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.5s;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Cards */
+        .admin-card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .admin-card h2 {
+            margin-top: 0;
+            margin-bottom: 1.5rem;
+            color: #333;
+            font-size: 1.5rem;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 0.8rem;
+        }
+
+        /* Forms */
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #555;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .form-control:focus {
+            border-color: #4CAF50;
+            outline: none;
+        }
+
+        textarea.form-control {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .btn {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.3s;
+        }
+
+        .btn:hover {
+            background-color: #388e3c;
+        }
+
+        .btn-secondary {
+            background-color: #757575;
+        }
+
+        .btn-secondary:hover {
+            background-color: #616161;
+        }
+
+        .btn-danger {
+            background-color: #f44336;
+        }
+
+        .btn-danger:hover {
+            background-color: #d32f2f;
+        }
+
+        /* Tables */
+        .admin-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .admin-table th,
+        .admin-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        .admin-table th {
+            font-weight: 500;
+            color: #555;
+            background-color: #f9f9f9;
+        }
+
+        .admin-table tr:hover {
+            background-color: #f5f5f5;
+        }
+
+        .action-btns {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .action-btn {
+            background-color: #eee;
+            color: #333;
+            border: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .action-btn:hover {
+            background-color: #ddd;
+        }
+
+        .action-btn.edit:hover {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .action-btn.delete:hover {
+            background-color: #f44336;
+            color: white;
+        }
+
+        /* Dropzone */
+        .dropzone {
+            border: 2px dashed #ccc;
+            border-radius: 5px;
+            padding: 25px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 1.5rem;
+        }
+        
+        .dropzone:hover {
+            border-color: #007bff;
+            background-color: rgba(0, 123, 255, 0.05);
+        }
+
+        .dropzone.dragover {
+            border-color: #007bff;
+            background-color: rgba(0, 123, 255, 0.1);
+        }
+
+        .dropzone i {
+            font-size: 2rem;
+            color: #888;
+            margin-bottom: 10px;
+        }
+
+        /* Styles pour les vignettes d'aperçu */
+        .thumbnail-preview {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .thumbnail {
+            width: 100px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .thumbnail img {
+            width: 100%;
+            height: 80px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .thumbnail-name {
+            font-size: 0.7rem;
+            padding: 3px;
+            text-align: center;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            background-color: #f8f9fa;
+            border-top: 1px solid #ddd;
+        }
+
+        /* Styles pour les formulaires de location */
+        #tracteur-location-details,
+        #materiel-location-details {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            border: 1px solid #e9ecef;
+        }
+
+        /* Styles pour les radios et checkboxes */
+        .radio-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 5px;
+        }
+
+        .radio-label {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .radio-label input {
+            margin-right: 5px;
+        }
+
+        /* Déjà défini plus haut */
+
+        .dropzone i {
+            font-size: 2rem;
+            color: #4CAF50;
+            margin-bottom: 1rem;
+        }
+
+        .dropzone p {
+            margin: 0;
+            color: #666;
+        }
+
+        .thumbnail-preview {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .thumbnail {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+        }
+
+        /* Radio & Checkbox */
+        .radio-group {
+            display: flex;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .radio-label {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .radio-label input {
+            margin-right: 0.5rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .tabs {
+                flex-wrap: wrap;
+            }
+            
+            .tab-btn {
+                padding: 0.8rem 1rem;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="main-header">
+        <div class="container">
+            <div class="logo">
+                <a href="../index.html" class="logo-link">
+                    <div class="logo-text">FRANCHINI</div>
+                </a>
+                <div class="header-social">
+                    <a href="https://www.facebook.com/franchinimarches" target="_blank" class="social-icon">
+                        <i class="fab fa-facebook-f"></i>
+                    </a>
+                    <a href="https://www.instagram.com/franchini_deutzfahr" target="_blank" class="social-icon">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                </div>
+            </div>
+            <nav class="main-nav">
+                <ul>
+                    <li class="dropdown">
+                        <a href="concession.html">La concession</a>
+                    </li>
+                    <li class="dropdown">
+                        <a href="#">Matériel neuf</a>
+                        <div class="dropdown-content">
+                            <a href="materiel.html">Matériel neuf</a>
+                            <a href="materiel-disponible.html">Matériel neuf disponible</a>
+                        </div>
+                    </li>
+                    <li><a href="location.html">Location</a></li>
+                    <li><a href="https://www.agriaffaires.com/pros/list/22624-0/1/franchini-sarl.html" target="_blank">Occasion</a></li>
+                    <li><a href="magasin.html">Magasin</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                    <li><a href="tel:0475474037" class="phone-number"><i class="fas fa-phone"></i> 04 75 47 40 37</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <div class="admin-header">
+        <div class="container">
+            <div class="user-info">
+                <h1>Panneau d'administration</h1>
+                <div>
+                    <span class="user-name">Connecté en tant que Cedric</span>
+                    <a href="connexion-prive.html" class="logout-btn">
+                        <i class="fas fa-sign-out-alt"></i>
+                        Déconnexion
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <main class="container">
+            <div class="tabs">
+                <button class="tab-btn active" data-tab="utilisateurs">
+                    <i class="fas fa-users"></i> Utilisateurs
+                </button>
+                <button class="tab-btn" data-tab="actualites">
+                    <i class="fas fa-newspaper"></i> Actualités
+                </button>
+                <button class="tab-btn" data-tab="occasions">
+                    <i class="fas fa-car"></i> Occasions
+                </button>
+                <button class="tab-btn" data-tab="promotions">
+                    <i class="fas fa-tags"></i> Promotions
+                </button>
+                <button class="tab-btn" data-tab="contacts">
+                    <i class="fas fa-address-book"></i> Contacts
+                </button>
+            </div>
+
+            <div id="utilisateurs" class="tab-content active">
+                <h2>Gestion des Utilisateurs</h2>
+                <div class="admin-card">
+                    <h3>Ajouter/Modifier un Utilisateur</h3>
+                    <form id="utilisateur-form">
+                        <input type="hidden" id="utilisateur-id">
+                        <label for="utilisateur-nom">Nom d'utilisateur:</label>
+                        <input type="text" id="utilisateur-nom" required><br>
+                        <label for="utilisateur-mdp">Mot de passe:</label>
+                        <input type="password" id="utilisateur-mdp" required><br>
+                        <button type="button" id="add-utilisateur-btn" class="btn-primary"><i class="fas fa-plus"></i> Ajouter l'utilisateur</button>
+                    </form>
+                    <p><small><strong>Avertissement de sécurité :</strong> Les mots de passe sont stockés de manière non sécurisée pour cette démonstration. Ne pas utiliser cette méthode en production.</small></p>
+                </div>
+                <div class="admin-card">
+                    <h3>Liste des Utilisateurs</h3>
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Nom d'utilisateur</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="utilisateurs-table-body">
+                            <!-- Les utilisateurs seront listés ici -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div id="actualites" class="tab-content">
+                <h2>Gestion des Actualités</h2>
+                <div class="admin-card">
+                    <h3>Ajouter/Modifier une Actualité</h3>
+                    <form id="actualite-form">
+                        <label for="actualite-titre">Titre:</label><input type="text" id="actualite-titre" required><br>
+                        <label for="actualite-contenu">Contenu:</label><textarea id="actualite-contenu" rows="5" required></textarea><br>
+                        <label for="actualite-date">Date:</label><input type="date" id="actualite-date" required><br>
+                        <!-- Pour l'image, une gestion plus complexe serait nécessaire (upload, etc.). Pour l'instant, on omet. -->
+                        <button type="button" id="add-actualite-btn" class="btn-primary"><i class="fas fa-plus"></i> Ajouter l'actualité</button>
+                    </form>
+                </div>
+                <div class="admin-card">
+                    <h3>Liste des Actualités</h3>
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Titre</th><th>Date</th><th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="actualites-table-body">
+                            <!-- Les actualités seront listées ici -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div id="occasions" class="tab-content">
+                <h2>Gestion des Occasions (Matériels et Tracteurs)</h2>
+                <div class="admin-card">
+                    <h3>Ajouter/Modifier un Matériel/Tracteur</h3>
+                    <form id="materiel-type-selector">
+                        <label><input type="radio" name="materiel-categorie" value="tracteur" checked> Tracteur</label>
+                        <label><input type="radio" name="materiel-categorie" value="materiel"> Autre Matériel</label>
+                    </form>
+                    <form id="tracteur-form" style="display: block;">
+                        <h4>Formulaire Tracteur</h4>
+                        <label for="tracteur-marque">Marque:</label><input type="text" id="tracteur-marque"><br>
+                        <label for="tracteur-modele">Modèle:</label><input type="text" id="tracteur-modele"><br>
+                        <label for="tracteur-puissance">Puissance (ch):</label><input type="number" id="tracteur-puissance"><br>
+                        <label for="tracteur-boite">Boîte de vitesses:</label><input type="text" id="tracteur-boite"><br>
+                        <label for="tracteur-pneus-av">Pneus AV:</label><input type="text" id="tracteur-pneus-av"><br>
+                        <label for="tracteur-pneus-ar">Pneus AR:</label><input type="text" id="tracteur-pneus-ar"><br>
+                        <label for="tracteur-prix">Prix (€):</label><input type="number" id="tracteur-prix"><br>
+                        <label>État:</label>
+                        <label><input type="radio" name="materiel-etat" value="neuf" checked> Neuf</label>
+                        <label><input type="radio" name="materiel-etat" value="occasion"> Occasion</label><br>
+                        <label><input type="checkbox" id="tracteur-location"> Proposer à la location</label>
+                        <div id="tracteur-location-details" style="display:none;">
+                            <label for="tracteur-prix-jour">Prix/Jour (€):</label><input type="number" id="tracteur-prix-jour"><br>
+                            <label for="tracteur-prix-semaine">Prix/Semaine (€):</label><input type="number" id="tracteur-prix-semaine"><br>
+                        </div>
+                        <label for="tracteur-photos">Photos:</label>
+                        <div id="tracteur-dropzone" class="dropzone"><p>Glissez-déposez des photos ici ou cliquez pour sélectionner.</p></div>
+                        <input type="file" id="tracteur-photos" multiple accept="image/*" style="display:none;">
+                        <div id="tracteur-preview" class="preview-container"></div>
+                        <button type="button" id="add-tracteur-btn" class="btn-primary"><i class="fas fa-plus"></i> Ajouter le tracteur</button>
+                    </form>
+                    <form id="materiel-form" style="display: none;">
+                        <h4>Formulaire Autre Matériel</h4>
+                        <label for="materiel-type">Type de matériel:</label><input type="text" id="materiel-type"><br>
+                        <label for="materiel-marque">Marque:</label><input type="text" id="materiel-marque"><br>
+                        <label for="materiel-prix">Prix (€):</label><input type="number" id="materiel-prix"><br>
+                        <label>État:</label>
+                        <label><input type="radio" name="materiel-etat-autre" value="neuf" checked> Neuf</label>
+                        <label><input type="radio" name="materiel-etat-autre" value="occasion"> Occasion</label><br>
+                        <label><input type="checkbox" id="materiel-location"> Proposer à la location</label>
+                        <div id="materiel-location-details" style="display:none;">
+                            <label for="materiel-prix-jour">Prix/Jour (€):</label><input type="number" id="materiel-prix-jour"><br>
+                            <label for="materiel-prix-semaine">Prix/Semaine (€):</label><input type="number" id="materiel-prix-semaine"><br>
+                        </div>
+                        <label for="materiel-photos">Photos:</label>
+                        <div id="materiel-dropzone" class="dropzone"><p>Glissez-déposez des photos ici ou cliquez pour sélectionner.</p></div>
+                        <input type="file" id="materiel-photos" multiple accept="image/*" style="display:none;">
+                        <div id="materiel-preview" class="preview-container"></div>
+                        <button type="button" id="add-materiel-btn" class="btn-primary"><i class="fas fa-plus"></i> Ajouter le matériel</button>
+                    </form>
+                </div>
+                <div class="admin-card">
+                    <h3>Liste des Occasions</h3>
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Type</th><th>Marque</th><th>Modèle/Type</th><th>État</th><th>Prix</th><th>Location</th><th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="occasions-table-body">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div id="promotions" class="tab-content">
+                <h2>Gestion des Promotions</h2>
+                 <div class="admin-card">
+                     <h3>Ajouter/Modifier une Promotion</h3>
+                     <form id="promo-form">
+                        <label for="promo-title">Titre:</label><input type="text" id="promo-title" required><br>
+                        <label for="promo-description">Description:</label><textarea id="promo-description"></textarea><br>
+                        <label for="promo-date-debut">Date de début:</label><input type="date" id="promo-date-debut" required><br>
+                        <label for="promo-date-fin">Date de fin:</label><input type="date" id="promo-date-fin" required><br>
+                        <label for="promo-image">Image:</label>
+                        <div id="promo-dropzone" class="dropzone"><p>Glissez-déposez une image ici ou cliquez pour sélectionner.</p></div>
+                        <input type="file" id="promo-image" accept="image/*" style="display:none;">
+                        <div id="promo-preview" class="preview-container"></div>
+                        <button type="button" id="add-promo-btn" class="btn-primary"><i class="fas fa-plus"></i> Ajouter la promotion</button>
+                     </form>
+                </div>
+                <div class="admin-card">
+                    <h3>Liste des Promotions</h3>
+                    <table class="admin-table">
+                        <thead><tr><th>Titre</th><th>Période</th><th>Actions</th></tr></thead>
+                        <tbody id="promos-table-body">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div id="contacts" class="tab-content">
+                <h2>Gestion des Fiches Contact</h2>
+                 <div class="admin-card">
+                    <h3>Ajouter/Modifier un Contact</h3>
+                    <form id="contact-form">
+                        <label for="contact-service">Service:</label>
+                        <select id="contact-service" required>
+                            <option value="direction">Direction</option><option value="commercial">Commercial</option><option value="atelier">Atelier</option><option value="magasin">Magasin</option><option value="secretariat">Secrétariat</option>
+                        </select><br>
+                        <label for="contact-nom">Nom:</label><input type="text" id="contact-nom" required><br>
+                        <label for="contact-prenom">Prénom:</label><input type="text" id="contact-prenom" required><br>
+                        <label for="contact-fonction">Fonction:</label><input type="text" id="contact-fonction" required><br>
+                        <label for="contact-tel">Téléphone:</label><input type="tel" id="contact-tel"><br>
+                        <label for="contact-email">Email:</label><input type="email" id="contact-email"><br>
+                        <button type="button" id="add-contact-btn" class="btn-primary"><i class="fas fa-plus"></i> Ajouter le contact</button>
+                    </form>
+                </div>
+                <div class="admin-card">
+                    <h3>Liste des Contacts</h3>
+                    <table class="admin-table">
+                        <thead><tr><th>Service</th><th>Nom Prénom</th><th>Fonction</th><th>Actions</th></tr></thead>
+                        <tbody id="contacts-table-body">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    <script>
+        // Stockage des données
+        const materiels = JSON.parse(localStorage.getItem('franchiniOccasions')) || [];
+        let currentEditId = null;
+
+        const actualites = JSON.parse(localStorage.getItem('franchiniActualites')) || [];
+        let currentActualiteEditId = null;
+
+        // Gestion des utilisateurs
+        let utilisateurs = JSON.parse(localStorage.getItem('franchiniUtilisateurs')) || [];
+        let currentUtilisateurEditId = null;
+
+        // Assurer qu'il y a au moins un administrateur par défaut si la liste est vide
+        if (utilisateurs.length === 0) {
+            utilisateurs.push({ id: Date.now(), nom: 'Cedric', mdp: '159632' }); // Mot de passe en clair (NON SÉCURISÉ)
+            localStorage.setItem('franchiniUtilisateurs', JSON.stringify(utilisateurs));
+        }
+
+        // Gestion des onglets
+        document.addEventListener('DOMContentLoaded', function() {
+            const tabBtns = document.querySelectorAll('.tab-btn');
+            const tabContents = document.querySelectorAll('.tab-content');
+
+            tabBtns.forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    // Retirer la classe active de tous les boutons et contenus
+                    tabBtns.forEach(b => b.classList.remove('active'));
+                    tabContents.forEach(c => c.classList.remove('active'));
+                    
+                    // Ajouter la classe active au bouton cliqué
+                    this.classList.add('active');
+                    
+                    // Afficher le contenu correspondant
+                    const targetTab = this.getAttribute('data-tab');
+                    document.getElementById(targetTab).classList.add('active');
+                });
+            });
+
+            // Gestion des occasions (tracteurs et matériels)
+            const materielTypeRadios = document.querySelectorAll('input[name="materiel-categorie"]');
+            const tracteurForm = document.getElementById('tracteur-form');
+            const materielForm = document.getElementById('materiel-form');
+            
+            // Gestion de l'affichage des formulaires de matériel/tracteur
+            materielTypeRadios.forEach(radio => {
+                radio.addEventListener('change', function() {
+                    tracteurForm.style.display = this.value === 'tracteur' ? 'block' : 'none';
+                    materielForm.style.display = this.value === 'materiel' ? 'block' : 'none';
+                });
+            });
+
+            // Gestion de la location pour les tracteurs
+            document.getElementById('tracteur-location').addEventListener('change', function() {
+                document.getElementById('tracteur-location-details').style.display = this.checked ? 'block' : 'none';
+            });
+
+            // Gestion de la location pour le matériel
+            document.getElementById('materiel-location').addEventListener('change', function() {
+                document.getElementById('materiel-location-details').style.display = this.checked ? 'block' : 'none';
+            });
+
+            // Gestion de l'ajout d'un tracteur
+            document.getElementById('add-tracteur-btn').addEventListener('click', function() {
+                const etat = document.querySelector('input[name="materiel-etat"]:checked').value;
+                const location = document.getElementById('tracteur-location').checked;
+                
+                const materiel = {
+                    id: Date.now(),
+                    type: 'tracteur',
+                    etat: etat,
+                    marque: document.getElementById('tracteur-marque').value,
+                    modele: document.getElementById('tracteur-modele').value,
+                    puissance: document.getElementById('tracteur-puissance').value,
+                    boite: document.getElementById('tracteur-boite').value,
+                    pneusAv: document.getElementById('tracteur-pneus-av').value,
+                    pneusAr: document.getElementById('tracteur-pneus-ar').value,
+                    prix: document.getElementById('tracteur-prix').value,
+                    location: location,
+                    prixJour: location ? document.getElementById('tracteur-prix-jour').value : null,
+                    prixSemaine: location ? document.getElementById('tracteur-prix-semaine').value : null,
+                    photos: [] // À implémenter: gestion des photos
+                };
+
+                if (currentEditId) {
+                    // Mise à jour d'un matériel existant
+                    const index = materiels.findIndex(m => m.id === currentEditId);
+                    if (index !== -1) {
+                        materiels[index] = { ...materiel, id: currentEditId };
+                    }
+                    currentEditId = null;
+                    this.innerHTML = '<i class="fas fa-plus"></i> Ajouter le tracteur';
+                } else {
+                    // Ajout d'un nouveau matériel
+                    materiels.push(materiel);
+                }
+
+                updateMaterielsTable();
+                resetTracteurForm();
+            });
+
+            // Gestion de l'ajout d'un matériel
+            document.getElementById('add-materiel-btn').addEventListener('click', function() {
+                const etat = document.querySelector('input[name="materiel-etat-autre"]:checked').value; // Changed name here to avoid conflict
+                const location = document.getElementById('materiel-location').checked;
+                
+                const materiel = {
+                    id: Date.now(),
+                    type: 'materiel',
+                    etat: etat,
+                    typeMateriel: document.getElementById('materiel-type').value,
+                    marque: document.getElementById('materiel-marque').value,
+                    prix: document.getElementById('materiel-prix').value,
+                    location: location,
+                    prixJour: location ? document.getElementById('materiel-prix-jour').value : null,
+                    prixSemaine: location ? document.getElementById('materiel-prix-semaine').value : null,
+                    photos: [] // À implémenter: gestion des photos
+                };
+
+                if (currentEditId) {
+                    // Mise à jour d'un matériel existant
+                    const index = materiels.findIndex(m => m.id === currentEditId);
+                    if (index !== -1) {
+                        materiels[index] = { ...materiel, id: currentEditId };
+                    }
+                    currentEditId = null;
+                    this.innerHTML = '<i class="fas fa-plus"></i> Ajouter le matériel';
+                } else {
+                    // Ajout d'un nouveau matériel
+                    materiels.push(materiel);
+                }
+
+                updateMaterielsTable();
+                resetMaterielForm();
+            });
+
+            // Fonction pour mettre à jour le tableau des matériels
+            function updateMaterielsTable() {
+                const tbody = document.getElementById('occasions-table-body');
+                tbody.innerHTML = '';
+
+                materiels.forEach(materiel => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${materiel.type === 'tracteur' ? 'Tracteur' : 'Matériel'}</td>
+                        <td>${materiel.marque}</td>
+                        <td>${materiel.type === 'tracteur' ? materiel.modele : materiel.typeMateriel}</td>
+                        <td>${materiel.etat.charAt(0).toUpperCase() + materiel.etat.slice(1)}</td>
+                        <td>${materiel.prix} €</td>
+                        <td>${materiel.location ? 'Oui' : 'Non'}</td>
+                        <td>
+                            <div class="action-btns">
+                                <button class="action-btn edit" title="Modifier" data-id="${materiel.id}">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="action-btn delete" title="Supprimer" data-id="${materiel.id}">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                            </div>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+
+                // Ajout des écouteurs d'événements pour les boutons d'action
+                document.querySelectorAll('#occasions-table-body .action-btn.edit').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const id = parseInt(this.getAttribute('data-id'));
+                        editMateriel(id);
+                    });
+                });
+
+                document.querySelectorAll('#occasions-table-body .action-btn.delete').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const id = parseInt(this.getAttribute('data-id'));
+                        deleteMateriel(id);
+                    });
+                });
+
+                // Mise à jour des pages concernées (simulé pour l'instant)
+                // updateMaterielDisponiblePage(); 
+                // updateOccasionPage();
+                // updateLocationPage();
+                localStorage.setItem('franchiniOccasions', JSON.stringify(materiels));
+            }
+
+            // Fonction pour éditer un matériel
+            function editMateriel(id) {
+                const materiel = materiels.find(m => m.id === id);
+                if (!materiel) return;
+
+                currentEditId = id;
+
+                document.querySelector(`input[name="materiel-categorie"][value="${materiel.type}"]`).checked = true;
+                tracteurForm.style.display = materiel.type === 'tracteur' ? 'block' : 'none';
+                materielForm.style.display = materiel.type === 'materiel' ? 'block' : 'none';
+
+                if (materiel.type === 'tracteur') {
+                    document.querySelector('input[name="materiel-etat"]:checked').value = materiel.etat;
+                    document.getElementById('tracteur-marque').value = materiel.marque || '';
+                    document.getElementById('tracteur-modele').value = materiel.modele || '';
+                    document.getElementById('tracteur-puissance').value = materiel.puissance || '';
+                    document.getElementById('tracteur-boite').value = materiel.boite || '';
+                    document.getElementById('tracteur-pneus-av').value = materiel.pneusAv || '';
+                    document.getElementById('tracteur-pneus-ar').value = materiel.pneusAr || '';
+                    document.getElementById('tracteur-prix').value = materiel.prix || '';
+                    document.getElementById('tracteur-location').checked = materiel.location || false;
+                    document.getElementById('tracteur-location-details').style.display = materiel.location ? 'block' : 'none';
+                    document.getElementById('tracteur-prix-jour').value = materiel.prixJour || '';
+                    document.getElementById('tracteur-prix-semaine').value = materiel.prixSemaine || '';
+                    document.getElementById('add-tracteur-btn').innerHTML = '<i class="fas fa-save"></i> Enregistrer les modifications';
+                } else {
+                    document.querySelector('input[name="materiel-etat-autre"]:checked').value = materiel.etat;
+                    document.getElementById('materiel-type').value = materiel.typeMateriel || '';
+                    document.getElementById('materiel-marque').value = materiel.marque || '';
+                    document.getElementById('materiel-prix').value = materiel.prix || '';
+                    document.getElementById('materiel-location').checked = materiel.location || false;
+                    document.getElementById('materiel-location-details').style.display = materiel.location ? 'block' : 'none';
+                    document.getElementById('materiel-prix-jour').value = materiel.prixJour || '';
+                    document.getElementById('materiel-prix-semaine').value = materiel.prixSemaine || '';
+                    document.getElementById('add-materiel-btn').innerHTML = '<i class="fas fa-save"></i> Enregistrer les modifications';
+                }
+                document.querySelector('#occasions .admin-card h3').scrollIntoView({ behavior: 'smooth' });
+            }
+
+            function deleteMateriel(id) {
+                if (confirm('Êtes-vous sûr de vouloir supprimer ce matériel ?')) {
+                    const index = materiels.findIndex(m => m.id === id);
+                    if (index !== -1) {
+                        materiels.splice(index, 1);
+                        localStorage.setItem('franchiniOccasions', JSON.stringify(materiels));
+                        updateMaterielsTable();
+                    }
+                }
+            }
+
+            function resetTracteurForm() {
+                document.getElementById('tracteur-form').reset();
+                document.getElementById('tracteur-location-details').style.display = 'none';
+                document.getElementById('tracteur-preview').innerHTML = '';
+                document.getElementById('add-tracteur-btn').innerHTML = '<i class="fas fa-plus"></i> Ajouter le tracteur';
+                currentEditId = null;
+            }
+
+            function resetMaterielForm() {
+                document.getElementById('materiel-form').reset();
+                document.getElementById('materiel-location-details').style.display = 'none';
+                document.getElementById('materiel-preview').innerHTML = '';
+                document.getElementById('add-materiel-btn').innerHTML = '<i class="fas fa-plus"></i> Ajouter le matériel';
+                currentEditId = null;
+            }
+
+            // Gestion des promotions
+            const addPromoBtn = document.getElementById('add-promo-btn');
+            const promosTableBody = document.getElementById('promos-table-body');
+            const promos = JSON.parse(localStorage.getItem('franchiniPromos')) || []; // Stockage pour les promotions
+            let currentPromoEditId = null;
+
+            if (addPromoBtn) {
+                addPromoBtn.addEventListener('click', function() {
+                    const title = document.getElementById('promo-title').value;
+                    const description = document.getElementById('promo-description').value;
+                    const dateDebut = document.getElementById('promo-date-debut').value;
+                    const dateFin = document.getElementById('promo-date-fin').value;
+                    // const image = document.getElementById('promo-image').files[0]; // Gestion d'image à affiner
+
+                    if (title && dateDebut && dateFin) {
+                        const promo = { id: currentPromoEditId || Date.now(), title, description, dateDebut, dateFin }; //, imageName: image ? image.name : null };
+                        if (currentPromoEditId) {
+                            const index = promos.findIndex(p => p.id === currentPromoEditId);
+                            promos[index] = promo;
+                        } else {
+                            promos.push(promo);
+                        }
+                        localStorage.setItem('franchiniPromos', JSON.stringify(promos));
+                        updatePromosTable();
+                        resetPromoForm();
+                    } else {
+                        alert('Veuillez remplir tous les champs obligatoires pour la promotion.');
+                    }
+                });
+            }
+
+            function updatePromosTable() {
+                promosTableBody.innerHTML = '';
+                promos.forEach(promo => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${promo.title}</td>
+                        <td>${formatDate(promo.dateDebut)} - ${formatDate(promo.dateFin)}</td>
+                        <td>
+                            <div class="action-btns">
+                                <button class="action-btn edit" title="Modifier" data-id="${promo.id}"><i class="fas fa-edit"></i></button>
+                                <button class="action-btn delete" title="Supprimer" data-id="${promo.id}"><i class="fas fa-trash-alt"></i></button>
+                            </div>
+                        </td>
+                    `;
+                    promosTableBody.appendChild(tr);
+                });
+                // Add event listeners for new buttons
+                document.querySelectorAll('#promos-table-body .action-btn.edit').forEach(btn => btn.addEventListener('click', e => editPromo(parseInt(e.currentTarget.dataset.id))));
+                document.querySelectorAll('#promos-table-body .action-btn.delete').forEach(btn => btn.addEventListener('click', e => deletePromo(parseInt(e.currentTarget.dataset.id))));
+            }
+            
+            function resetPromoForm() {
+                document.getElementById('promo-form').reset();
+                document.getElementById('promo-preview').innerHTML = '';
+                addPromoBtn.innerHTML = '<i class="fas fa-plus"></i> Ajouter la promotion';
+                currentPromoEditId = null;
+            }
+
+            function editPromo(id) {
+                const promo = promos.find(p => p.id === id);
+                if (!promo) return;
+                currentPromoEditId = id;
+                document.getElementById('promo-title').value = promo.title;
+                document.getElementById('promo-description').value = promo.description;
+                document.getElementById('promo-date-debut').value = promo.dateDebut;
+                document.getElementById('promo-date-fin').value = promo.dateFin;
+                addPromoBtn.innerHTML = '<i class="fas fa-save"></i> Enregistrer les modifications';
+                document.querySelector('#promotions .admin-card h3').scrollIntoView({ behavior: 'smooth' });
+            }
+
+            function deletePromo(id) {
+                if (confirm('Êtes-vous sûr de vouloir supprimer cette promotion ?')) {
+                    const index = promos.findIndex(p => p.id === id);
+                    if (index !== -1) {
+                        promos.splice(index, 1);
+                        localStorage.setItem('franchiniPromos', JSON.stringify(promos));
+                        updatePromosTable();
+                    }
+                }
+            }
+
+            // Gestion des contacts
+            const addContactBtn = document.getElementById('add-contact-btn');
+            const contactsTableBody = document.getElementById('contacts-table-body');
+            const contacts = JSON.parse(localStorage.getItem('franchiniContacts')) || []; // Stockage pour les contacts
+            let currentContactEditId = null;
+
+            if (addContactBtn) {
+                addContactBtn.addEventListener('click', function() {
+                    const service = document.getElementById('contact-service').value;
+                    const nom = document.getElementById('contact-nom').value;
+                    const prenom = document.getElementById('contact-prenom').value;
+                    const fonction = document.getElementById('contact-fonction').value;
+                    const tel = document.getElementById('contact-tel').value;
+                    const email = document.getElementById('contact-email').value;
+
+                    if (service && nom && prenom && fonction) {
+                        const contact = { id: currentContactEditId || Date.now(), service, nom, prenom, fonction, tel, email };
+                        if (currentContactEditId) {
+                            const index = contacts.findIndex(c => c.id === currentContactEditId);
+                            contacts[index] = contact;
+                        } else {
+                            contacts.push(contact);
+                        }
+                        localStorage.setItem('franchiniContacts', JSON.stringify(contacts));
+                        updateContactsTable();
+                        resetContactForm();
+                    } else {
+                        alert('Veuillez remplir les champs Service, Nom, Prénom et Fonction.');
+                    }
+                });
+            }
+
+            function updateContactsTable() {
+                contactsTableBody.innerHTML = '';
+                contacts.forEach(contact => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${contact.service.charAt(0).toUpperCase() + contact.service.slice(1)}</td>
+                        <td>${contact.nom} ${contact.prenom}</td>
+                        <td>${contact.fonction}</td>
+                        <td>
+                            <div class="action-btns">
+                                <button class="action-btn edit" title="Modifier" data-id="${contact.id}"><i class="fas fa-edit"></i></button>
+                                <button class="action-btn delete" title="Supprimer" data-id="${contact.id}"><i class="fas fa-trash-alt"></i></button>
+                            </div>
+                        </td>
+                    `;
+                    contactsTableBody.appendChild(tr);
+                });
+                document.querySelectorAll('#contacts-table-body .action-btn.edit').forEach(btn => btn.addEventListener('click', e => editContact(parseInt(e.currentTarget.dataset.id))));
+                document.querySelectorAll('#contacts-table-body .action-btn.delete').forEach(btn => btn.addEventListener('click', e => deleteContact(parseInt(e.currentTarget.dataset.id))));
+            }
+
+            function resetContactForm() {
+                document.getElementById('contact-form').reset();
+                addContactBtn.innerHTML = '<i class="fas fa-plus"></i> Ajouter le contact';
+                currentContactEditId = null;
+            }
+
+            function editContact(id) {
+                const contact = contacts.find(c => c.id === id);
+                if (!contact) return;
+                currentContactEditId = id;
+                document.getElementById('contact-service').value = contact.service;
+                document.getElementById('contact-nom').value = contact.nom;
+                document.getElementById('contact-prenom').value = contact.prenom;
+                document.getElementById('contact-fonction').value = contact.fonction;
+                document.getElementById('contact-tel').value = contact.tel;
+                document.getElementById('contact-email').value = contact.email;
+                addContactBtn.innerHTML = '<i class="fas fa-save"></i> Enregistrer les modifications';
+                document.querySelector('#contacts .admin-card h3').scrollIntoView({ behavior: 'smooth' });
+            }
+
+            function deleteContact(id) {
+                if (confirm('Êtes-vous sûr de vouloir supprimer ce contact ?')) {
+                    const index = contacts.findIndex(c => c.id === id);
+                    if (index !== -1) {
+                        contacts.splice(index, 1);
+                        localStorage.setItem('franchiniContacts', JSON.stringify(contacts));
+                        updateContactsTable();
+                    }
+                }
+            }
+            
+            // Initialisation des dropzones
+            setupDropzone('tracteur-dropzone', 'tracteur-photos', 'tracteur-preview');
+            setupDropzone('materiel-dropzone', 'materiel-photos', 'materiel-preview');
+            setupDropzone('promo-dropzone', 'promo-image', 'promo-preview');
+
+            // Initialisation des tables au chargement
+            updateMaterielsTable();
+            updateActualitesTable();
+            updatePromosTable();
+            updateContactsTable();
+            updateUtilisateursTable(); // Ajout pour initialiser la table des utilisateurs
+
+            // Gestion des actualités
+            const addActualiteBtn = document.getElementById('add-actualite-btn');
+            const actualitesTableBody = document.getElementById('actualites-table-body');
+
+            if (addActualiteBtn) {
+                addActualiteBtn.addEventListener('click', function() {
+                    const titre = document.getElementById('actualite-titre').value;
+                    const contenu = document.getElementById('actualite-contenu').value;
+                    const date = document.getElementById('actualite-date').value;
+
+                    if (titre && contenu && date) {
+                        const actualite = { 
+                            id: currentActualiteEditId || Date.now(), 
+                            titre, 
+                            contenu, 
+                            date 
+                        };
+                        if (currentActualiteEditId) {
+                            const index = actualites.findIndex(a => a.id === currentActualiteEditId);
+                            if (index !== -1) actualites[index] = actualite;
+                        } else {
+                            actualites.push(actualite);
+                        }
+                        localStorage.setItem('franchiniActualites', JSON.stringify(actualites));
+                        updateActualitesTable();
+                        resetActualiteForm();
+                    } else {
+                        alert('Veuillez remplir tous les champs pour l\'actualité.');
+                    }
+                });
+            }
+
+            function updateActualitesTable() {
+                if (!actualitesTableBody) return;
+                actualitesTableBody.innerHTML = '';
+                actualites.sort((a, b) => new Date(b.date) - new Date(a.date)); // Trier par date décroissante
+                actualites.forEach(actualite => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${actualite.titre}</td>
+                        <td>${formatDate(actualite.date)}</td>
+                        <td>
+                            <div class="action-btns">
+                                <button class="action-btn edit" title="Modifier" data-id="${actualite.id}"><i class="fas fa-edit"></i></button>
+                                <button class="action-btn delete" title="Supprimer" data-id="${actualite.id}"><i class="fas fa-trash-alt"></i></button>
+                            </div>
+                        </td>
+                    `;
+                    actualitesTableBody.appendChild(tr);
+                });
+                document.querySelectorAll('#actualites-table-body .action-btn.edit').forEach(btn => btn.addEventListener('click', e => editActualite(parseInt(e.currentTarget.dataset.id))));
+                document.querySelectorAll('#actualites-table-body .action-btn.delete').forEach(btn => btn.addEventListener('click', e => deleteActualite(parseInt(e.currentTarget.dataset.id))));
+            }
+
+            function resetActualiteForm() {
+                document.getElementById('actualite-form').reset();
+                addActualiteBtn.innerHTML = '<i class="fas fa-plus"></i> Ajouter l\'actualité';
+                currentActualiteEditId = null;
+            }
+
+            function editActualite(id) {
+                const actualite = actualites.find(a => a.id === id);
+                if (!actualite) return;
+                currentActualiteEditId = id;
+                document.getElementById('actualite-titre').value = actualite.titre;
+                document.getElementById('actualite-contenu').value = actualite.contenu;
+                document.getElementById('actualite-date').value = actualite.date; // HTML date input expects YYYY-MM-DD
+                addActualiteBtn.innerHTML = '<i class="fas fa-save"></i> Enregistrer les modifications';
+                document.querySelector('#actualites .admin-card h3').scrollIntoView({ behavior: 'smooth' });
+            }
+
+            function deleteActualite(id) {
+                if (confirm('Êtes-vous sûr de vouloir supprimer cette actualité ?')) {
+                    const index = actualites.findIndex(a => a.id === id);
+                    if (index !== -1) {
+                        actualites.splice(index, 1);
+                        localStorage.setItem('franchiniActualites', JSON.stringify(actualites));
+                        updateActualitesTable();
+                    }
+                }
+            }
+
+            // Logique pour la gestion des utilisateurs
+            const addUtilisateurBtn = document.getElementById('add-utilisateur-btn');
+            const utilisateursTableBody = document.getElementById('utilisateurs-table-body');
+            const utilisateurForm = document.getElementById('utilisateur-form');
+
+            if (addUtilisateurBtn) {
+                addUtilisateurBtn.addEventListener('click', function() {
+                    const id = document.getElementById('utilisateur-id').value;
+                    const nom = document.getElementById('utilisateur-nom').value.trim();
+                    const mdp = document.getElementById('utilisateur-mdp').value; // Pas de .trim() pour les MDP
+
+                    if (nom && mdp) {
+                        if (id) { // Modification
+                            const index = utilisateurs.findIndex(u => u.id === parseInt(id));
+                            if (index !== -1) {
+                                utilisateurs[index].nom = nom;
+                                utilisateurs[index].mdp = mdp; // NON SÉCURISÉ
+                            }
+                        } else { // Ajout
+                            // Vérifier si le nom d'utilisateur existe déjà
+                            if (utilisateurs.some(u => u.nom.toLowerCase() === nom.toLowerCase())) {
+                                alert('Ce nom d\'utilisateur existe déjà.');
+                                return;
+                            }
+                            utilisateurs.push({ id: Date.now(), nom, mdp }); // NON SÉCURISÉ
+                        }
+                        localStorage.setItem('franchiniUtilisateurs', JSON.stringify(utilisateurs));
+                        updateUtilisateursTable();
+                        resetUtilisateurForm();
+                    } else {
+                        alert('Veuillez remplir tous les champs pour l\'utilisateur.');
+                    }
+                });
+            }
+
+            function updateUtilisateursTable() {
+                if (!utilisateursTableBody) return;
+                utilisateursTableBody.innerHTML = '';
+                utilisateurs.forEach(user => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${user.nom}</td>
+                        <td>
+                            <div class="action-btns">
+                                <button class="action-btn edit" title="Modifier" data-id="${user.id}"><i class="fas fa-edit"></i></button>
+                                <button class="action-btn delete" title="Supprimer" data-id="${user.id}"><i class="fas fa-trash-alt"></i></button>
+                            </div>
+                        </td>
+                    `;
+                    utilisateursTableBody.appendChild(tr);
+                });
+                document.querySelectorAll('#utilisateurs-table-body .action-btn.edit').forEach(btn => btn.addEventListener('click', e => editUtilisateur(parseInt(e.currentTarget.dataset.id))));
+                document.querySelectorAll('#utilisateurs-table-body .action-btn.delete').forEach(btn => btn.addEventListener('click', e => deleteUtilisateur(parseInt(e.currentTarget.dataset.id))));
+            }
+
+            function resetUtilisateurForm() {
+                if (utilisateurForm) utilisateurForm.reset();
+                document.getElementById('utilisateur-id').value = '';
+                if (addUtilisateurBtn) addUtilisateurBtn.innerHTML = '<i class="fas fa-plus"></i> Ajouter l\'utilisateur';
+                if (addUtilisateurBtn) addUtilisateurBtn.classList.remove('btn-warning'); 
+                if (addUtilisateurBtn) addUtilisateurBtn.classList.add('btn-primary');
+            }
+
+            window.editUtilisateur = function(id) { // Exposer globalement pour l'appel depuis le HTML dynamique
+                const user = utilisateurs.find(u => u.id === id);
+                if (!user) return;
+                document.getElementById('utilisateur-id').value = user.id;
+                document.getElementById('utilisateur-nom').value = user.nom;
+                document.getElementById('utilisateur-mdp').value = user.mdp; // Pré-remplir le MDP pour modification (NON SÉCURISÉ)
+                if (addUtilisateurBtn) {
+                    addUtilisateurBtn.innerHTML = '<i class="fas fa-save"></i> Enregistrer les modifications';
+                    addUtilisateurBtn.classList.remove('btn-primary');
+                    addUtilisateurBtn.classList.add('btn-warning');
+                }
+                document.querySelector('#utilisateurs .admin-card h3').scrollIntoView({ behavior: 'smooth' });
+            }
+
+            window.deleteUtilisateur = function(id) { // Exposer globalement
+                // Empêcher la suppression du dernier utilisateur
+                if (utilisateurs.length <= 1) {
+                    alert('Vous ne pouvez pas supprimer le dernier utilisateur.');
+                    return;
+                }
+                if (confirm('Êtes-vous sûr de vouloir supprimer cet utilisateur ?')) {
+                    utilisateurs = utilisateurs.filter(u => u.id !== id);
+                    localStorage.setItem('franchiniUtilisateurs', JSON.stringify(utilisateurs));
+                    updateUtilisateursTable();
+                }
+            }
+        });
+
+        function setupDropzone(dropzoneId, inputId, previewId) {
+            const dropzone = document.getElementById(dropzoneId);
+            const input = document.getElementById(inputId);
+            const preview = document.getElementById(previewId);
+            
+            if (dropzone && input && preview) {
+                dropzone.addEventListener('click', () => input.click());
+                dropzone.addEventListener('dragover', e => { e.preventDefault(); dropzone.classList.add('dragover'); });
+                dropzone.addEventListener('dragleave', () => dropzone.classList.remove('dragover'));
+                dropzone.addEventListener('drop', e => {
+                    e.preventDefault();
+                    dropzone.classList.remove('dragover');
+                    if (e.dataTransfer.files.length > 0) {
+                        input.files = e.dataTransfer.files;
+                        handleFiles(input.files, preview);
+                    }
+                });
+                input.addEventListener('change', () => handleFiles(input.files, preview));
+            }
+        }
+
+        function handleFiles(files, preview) {
+            preview.innerHTML = '';
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                if (file.type.startsWith('image/')) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const thumbnail = document.createElement('div');
+                        thumbnail.className = 'thumbnail';
+                        thumbnail.innerHTML = `<img src="${e.target.result}" alt="Aperçu"><div class="thumbnail-name">${file.name}</div>`;
+                        preview.appendChild(thumbnail);
+                    };
+                    reader.readAsDataURL(file);
+                }
+            }
+        }
+
+        function formatDate(dateString) {
+            if (!dateString) return '';
+            const date = new Date(dateString);
+            const day = date.getDate().toString().padStart(2, '0');
+            const month = (date.getMonth() + 1).toString().padStart(2, '0');
+            const year = date.getFullYear();
+            return `${day}/${month}/${year}`;
+        }
+    </script>
+</body>
+</html>
