@@ -162,7 +162,7 @@
             </div>
             
             <div class="actions">
-                <a href="dashboard.php" class="btn btn-secondary">Retour au tableau de bord</a>
+                <a href="/dashboard.php" class="btn btn-secondary">Retour au tableau de bord</a>
                 <button type="submit" class="btn">Publier l'actualité</button>
             </div>
         </form>
@@ -237,7 +237,7 @@
                             imagePreview.src = e.target.result;
                             imagePreview.style.display = 'block';
                         };
-                        reader.readAsDataURL(file);
+                        reader.readAsDataurl(/file);
                     } else {
                         showError('Veuillez sélectionner un fichier image valide.');
                     }

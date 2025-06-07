@@ -1,8 +1,22 @@
 <?php
 session_start();
-require_once 'config.php'; // Assurez-vous que ce chemin est correct
+require_once 'config.php';
+
+// Générer et stocker un token CSRF
+if (empty($_SESSION['csrf_token'])) {
+    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+}
 
 $error_message = '';
+
+// Brute-force protection
+$max_attempts = 5;
+$lockout_time = 300; // 5 minutes
+
+if (!isset($_SESSION['login_attempts'])) {
+    $_SESSION['login_attempts'] = 0;
+    $_SESSION['last_attempt_time'] = 0;
+}
 
 // Si l'utilisateur est déjà connecté, rediriger vers le tableau de bord
 if (isset($_SESSION['admin'])) {
@@ -11,50 +25,55 @@ if (isset($_SESSION['admin'])) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $username = trim($_POST['username'] ?? '');
-    $password = $_POST['password'] ?? '';
-    $is_ajax_request = !empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest';
-
-    // Cas spécial pour Cedric / 159632
-    if ($username === 'Cedric' && $password === '159632') {
-        $_SESSION['admin'] = [
-            'id' => 0, // ID fictif pour l'utilisateur en dur
-            'username' => 'Cedric',
-            'email' => 'cedric@local.dev' // Email fictif
-        ];
-        if ($is_ajax_request) {
-            echo json_encode(['success' => true, 'redirect_url' => 'dashboard.php']);
-        } else {
-            header('Location: dashboard.php');
-        }
-        exit;
-    }
-
-    // Vérification pour les autres utilisateurs via la base de données
-    if (!empty($username) && !empty($password)) {
-        try {
-            $stmt = $pdo->prepare("SELECT * FROM admins WHERE username = :username OR email = :username");
-            $stmt->bindParam(':username', $username);
-            $stmt->execute();
-            $admin = $stmt->fetch(PDO::FETCH_ASSOC);
-
-            if ($admin && password_verify($password, $admin['password'])) {
-                $_SESSION['admin'] = $admin;
-                if ($is_ajax_request) {
-                    echo json_encode(['success' => true, 'redirect_url' => 'dashboard.php']);
-                } else {
-                    header('Location: dashboard.php');
-                }
-                exit;
-            } else {
-                $error_message = 'Identifiants incorrects. Veuillez réessayer.';
-            }
-        } catch (PDOException $e) {
-            error_log('Erreur PDO: ' . $e->getMessage()); // Journalisation de l'erreur
-            $error_message = 'Erreur de base de données. Veuillez réessayer.';
-        }
+    // Vérification CSRF
+    if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
+        $error_message = 'Erreur de sécurité. Veuillez recharger la page.';
     } else {
-        $error_message = 'Veuillez remplir tous les champs.';
+        // Check if locked out
+        if ($_SESSION['login_attempts'] >= $max_attempts && 
+            (time() - $_SESSION['last_attempt_time']) < $lockout_time) {
+            $error_message = 'Trop de tentatives échouées. Veuillez réessayer dans 5 minutes.';
+        } else {
+            // Validation et assainissement des entrées
+            $username = filter_input(INPUT_POST, 'username', FILTER_SANITIZE_STRING);
+            $password = filter_input(INPUT_POST, 'password', FILTER_UNSAFE_RAW);
+            $is_ajax_request = !empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest';
+
+            if (!empty($username) && !empty($password)) {
+                try {
+                    $stmt = $pdo->prepare("SELECT * FROM admins WHERE username = :username OR email = :username");
+                    $stmt->bindParam(':username', $username);
+                    $stmt->execute();
+                    $admin = $stmt->fetch(PDO::FETCH_ASSOC);
+
+                    if ($admin && password_verify($password, $admin['password'])) {
+                        // Reset attempt counter on successful login
+                        $_SESSION['login_attempts'] = 0;
+                        
+                        // Régénération de l'ID de session
+                        session_regenerate_id(true);
+                        
+                        $_SESSION['admin'] = $admin;
+                        if ($is_ajax_request) {
+                            echo json_encode(['success' => true, 'redirect_url' => 'dashboard.php']);
+                        } else {
+                            header('Location: dashboard.php');
+                        }
+                        exit;
+                    } else {
+                        // Increment failed attempt counter
+                        $_SESSION['login_attempts']++;
+                        $_SESSION['last_attempt_time'] = time();
+                        $error_message = 'Identifiants incorrects. Veuillez réessayer.';
+                    }
+                } catch (PDOException $e) {
+                    error_log('PDOException: ' . $e->getMessage());
+                    $error_message = 'Erreur de base de données. Veuillez réessayer.';
+                }
+            } else {
+                $error_message = 'Veuillez saisir un nom d\'utilisateur et un mot de passe.';
+            }
+        }
     }
     
     // Si c'est une requête AJAX et qu'il y a une erreur (après toutes les tentatives de connexion)
@@ -71,8 +90,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Connexion Administrateur - Franchini</title>
-    <link rel="stylesheet" href="../assets/css/style.css">
-    <link rel="stylesheet" href="../assets/css/footer-style.css">
+    <link rel="stylesheet" href="/../assets/css/style.css">
+    <link rel="stylesheet" href="/../assets/css/footer-style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         /* Styles repris de connexion-prive.html et adaptés */
@@ -209,8 +228,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <header class="main-header">
         <div class="container">
             <div class="logo">
-                <a href="../index.html" class="logo-link">
-                    <img src="../assets/images/logo/FRANCHINI logo.svg" alt="FRANCHINI Logo" class="logo-image">
+                <a href="/../index.html" class="logo-link">
+                    <img src="/../assets/images/logo/FRANCHINI logo.svg" alt="FRANCHINI Logo" class="logo-image">
                     <span class="logo-text">FRANCHINI</span>
                 </a>
                 <div class="header-social">
@@ -220,19 +239,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
             <nav class="main-nav">
                 <ul>
-                    <li><a href="../pages/concession.html">La concession</a></li>
+                    <li><a href="/../pages/concession.html">La concession</a></li>
                     <li class="dropdown">
                         <a href="#">Matériel neuf</a>
                         <div class="dropdown-content">
-                            <a href="../pages/materiel.html">Matériel neuf</a>
-                            <a href="../pages/materiel-disponible.html">Matériel neuf disponible</a>
+                            <a href="/../pages/materiel.html">Matériel neuf</a>
+                            <a href="/../pages/materiel-disponible.html">Matériel neuf disponible</a>
                         </div>
                     </li>
-                    <li><a href="../pages/location.html">Location</a></li>
-                    <li><a href="../pages/occasion.html">Occasion</a></li>
-                    <li><a href="../pages/magasin.html">Magasin</a></li>
-                    <li><a href="../pages/contact.html">Contact</a></li>
-                    <li><a href="tel:0475474037" class="phone-number"><i class="fas fa-phone"></i> 04 75 47 40 37</a></li>
+                    <li><a href="/../pages/location.html">Location</a></li>
+                    <li><a href="/../pages/occasion.html">Occasion</a></li>
+                    <li><a href="/../pages/magasin.html">Magasin</a></li>
+                    <li><a href="/../pages/contact.html">Contact</a></li>
+                    <li><a href="/tel:0475474037" class="phone-number"><i class="fas fa-phone"></i> 04 75 47 40 37</a></li>
                 </ul>
             </nav>
         </div>
@@ -253,6 +272,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <?php endif; ?>
 
             <form method="POST" action="login.php" class="login-form">
+                <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>">
                 <div class="form-group">
                     <label for="username">
                         <i class="fas fa-user"></i>
@@ -272,32 +292,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     Se connecter
                 </button>
             </form>
-            <div class="login-links">
-                <a href="#" class="forgot-password">Mot de passe oublié ?</a>
-                <a href="../index.html"><i class="fas fa-arrow-left"></i> Retour au site</a>
-            </div>
+            <p class="text-center mt-3">
+                <a href="/forgot-password.php">Mot de passe oublié ?</a>
+            </p>
+            <p class="text-center mt-2">
+                <a href="/../index.html">← Retour au site</a>
+            </p>
         </div>
     </main>
 
     <footer class="footer-container">
         <div class="footer-content">
             <div class="footer-section about">
-                <a href="../index.html"><img src="../assets/images/logo/FRANCHINI logo.svg" alt="Logo Franchini Footer" class="footer-logo"></a>
+                <a href="/../index.html"><img src="/../assets/images/logo/FRANCHINI logo.svg" alt="Logo Franchini Footer" class="footer-logo"></a>
                 <p class="footer-company-name">FRANCHINI</p>
                 <p class="footer-address">111 Av des Monts du Matin<br>26300 Marches</p>
-                <p class="footer-phone"><i class="fas fa-phone"></i> <a href="tel:0475474037">04 75 47 40 37</a></p>
+                <p class="footer-phone"><i class="fas fa-phone"></i> <a href="/tel:0475474037">04 75 47 40 37</a></p>
             </div>
             <div class="footer-section links">
                 <h3>Navigation</h3>
                 <ul>
-                    <li><a href="../index.html">Accueil</a></li>
-                    <li><a href="../pages/concession.html">La concession</a></li>
-                    <li><a href="../pages/materiel.html">Matériel neuf</a></li>
-                    <li><a href="../pages/location.html">Location</a></li>
-                    <li><a href="../pages/occasion.html">Occasion</a></li>
-                    <li><a href="../pages/magasin.html">Magasin</a></li>
-                    <li><a href="../pages/contact.html">Contact</a></li>
-                    <li><a href="../pages/mentions-legales.html">Mentions Légales</a></li>
+                    <li><a href="/../index.html">Accueil</a></li>
+                    <li><a href="/../pages/concession.html">La concession</a></li>
+                    <li><a href="/../pages/materiel.html">Matériel neuf</a></li>
+                    <li><a href="/../pages/location.html">Location</a></li>
+                    <li><a href="/../pages/occasion.html">Occasion</a></li>
+                    <li><a href="/../pages/magasin.html">Magasin</a></li>
+                    <li><a href="/../pages/contact.html">Contact</a></li>
+                    <li><a href="/../pages/mentions-legales.html">Mentions Légales</a></li>
                 </ul>
             </div>
             <div class="footer-section contact-info">
@@ -312,7 +334,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
         </div>
         <div class="footer-bottom">
-            <p>&copy; <span id="currentYear"></span> Franchini. Tous droits réservés. Site réalisé par <a href="https://www.votre-agence-web.com" target="_blank">VotreAgenceWeb</a>. <a href="../pages/connexion-prive.html" class="footer-intranet"><i class="fas fa-lock"></i> Connexion privée</a></p>
+            <p>&copy; <span id="currentYear"></span> Franchini. Tous droits réservés. Site réalisé par <a href="https://www.votre-agence-web.com" target="_blank">VotreAgenceWeb</a>. <a href="/../pages/connexion-prive.html" class="footer-intranet"><i class="fas fa-lock"></i> Connexion privée</a></p>
         </div>
     </footer>
     <script>

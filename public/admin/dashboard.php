@@ -119,7 +119,7 @@ $promotions = $pdo->query("SELECT * FROM promotions ORDER BY start_date DESC")->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Modification du site - Franchini</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         .section-header {
@@ -173,17 +173,17 @@ $promotions = $pdo->query("SELECT * FROM promotions ORDER BY start_date DESC")->
     <div class="dashboard">
         <header class="dashboard-header">
             <h1>Modification du site</h1>
-            <a href="logout.php" class="btn-logout">Déconnexion</a>
+            <a href="/logout.php" class="btn-logout">Déconnexion</a>
         </header>
 
         <div class="tabs">
-            <a href="?tab=actualites" class="tab <?php echo $active_tab === 'actualites' ? 'active' : ''; ?>">
+            <a href="/?tab=actualites" class="tab <?php echo $active_tab === 'actualites' ? 'active' : ''; ?>">
                 <i class="fas fa-newspaper"></i> Actualités
             </a>
-            <a href="?tab=magasin" class="tab <?php echo $active_tab === 'magasin' ? 'active' : ''; ?>">
+            <a href="/?tab=magasin" class="tab <?php echo $active_tab === 'magasin' ? 'active' : ''; ?>">
                 <i class="fas fa-store"></i> Magasin
             </a>
-            <a href="?tab=occasions" class="tab <?php echo $active_tab === 'occasions' ? 'active' : ''; ?>">
+            <a href="/?tab=occasions" class="tab <?php echo $active_tab === 'occasions' ? 'active' : ''; ?>">
                 <i class="fas fa-tractor"></i> Occasions
             </a>
         </div>
@@ -198,7 +198,7 @@ $promotions = $pdo->query("SELECT * FROM promotions ORDER BY start_date DESC")->
                 <section class="section-news">
                     <div class="section-header">
                         <h2>Gestion des actualités</h2>
-                        <a href="add-actualite.html" class="btn btn-primary">
+                        <a href="/add-actualite.html" class="btn btn-primary">
                             <i class="fas fa-plus"></i> Ajouter une actualité
                         </a>
                     </div>
@@ -233,7 +233,7 @@ $promotions = $pdo->query("SELECT * FROM promotions ORDER BY start_date DESC")->
                         ?>
                         <div class="news-item">
                             <?php if (!empty($item['image_url'])): ?>
-                                <img src="<?php echo htmlspecialchars($item['image_url']); ?>" alt="<?php echo htmlspecialchars($item['title']); ?>" class="news-image">
+                                <img src="/<?php echo htmlspecialchars($item['image_url']); ?>" alt="<?php echo htmlspecialchars($item['title']); ?>" class="news-image">
                             <?php else: ?>
                                 <div class="news-image-placeholder">Image non disponible</div>
                             <?php endif; ?>

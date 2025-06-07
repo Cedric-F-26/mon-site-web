@@ -48,7 +48,7 @@ include 'includes/header.php';
 <div class="container">
     <div class="page-header">
         <h1><?php echo $pageTitle; ?></h1>
-        <a href="add-actualite.php" class="btn btn-primary">
+        <a href="/add-actualite.php" class="btn btn-primary">
             <i class="fas fa-plus"></i> Ajouter une actualité
         </a>
     </div>
@@ -79,7 +79,7 @@ include 'includes/header.php';
                         <tr>
                             <td>
                                 <?php if (!empty($actualite['image_url'])): ?>
-                                    <img src="../<?php echo $actualite['image_url']; ?>" alt="" class="thumbnail">
+                                    <img src="/../<?php echo $actualite['image_url']; ?>" alt="" class="thumbnail">
                                 <?php else: ?>
                                     <span class="no-image">Aucune image</span>
                                 <?php endif; ?>
@@ -88,7 +88,7 @@ include 'includes/header.php';
                             <td><?php echo date('d/m/Y', strtotime($actualite['date'])); ?></td>
                             <td><?php echo date('d/m/Y H:i', strtotime($actualite['created_at'])); ?></td>
                             <td class="actions">
-                                <a href="edit-actualite.php?id=<?php echo $actualite['id']; ?>" class="btn btn-edit" title="Modifier">
+                                <a href="/edit-actualite.php?id=<?php echo $actualite['id']; ?>" class="btn btn-edit" title="Modifier">
                                     <i class="fas fa-edit"></i>
                                 </a>
                                 <a href="#" 
@@ -106,7 +106,7 @@ include 'includes/header.php';
     <?php else: ?>
         <div class="no-data">
             <p>Aucune actualité n'a été trouvée.</p>
-            <a href="add-actualite.php" class="btn btn-primary">
+            <a href="/add-actualite.php" class="btn btn-primary">
                 <i class="fas fa-plus"></i> Ajouter votre première actualité
             </a>
         </div>

@@ -114,7 +114,7 @@ include 'includes/header.php';
             <label>Image actuelle</label>
             <?php if (!empty($actualite['image_url'])): ?>
                 <div class="current-image">
-                    <img src="../<?php echo $actualite['image_url']; ?>" alt="Image actuelle" style="max-width: 300px; display: block; margin: 10px 0;">
+                    <img src="/../<?php echo $actualite['image_url']; ?>" alt="Image actuelle" style="max-width: 300px; display: block; margin: 10px 0;">
                 </div>
             <?php else: ?>
                 <p>Aucune image actuelle</p>
@@ -127,7 +127,7 @@ include 'includes/header.php';
                     <p>Glissez-déposez une image ici ou cliquez pour sélectionner</p>
                 </div>
                 <input type="file" id="image" name="image" accept="image/*" style="display: none;">
-                <img id="image-preview" src="#" alt="Aperçu de l'image" style="display: none; max-width: 100%; margin-top: 15px;">
+                <img id="image-preview" src="/#" alt="Aperçu de l'image" style="display: none; max-width: 100%; margin-top: 15px;">
             </div>
             <p class="help-text">Formats acceptés : JPG, PNG, GIF, WebP. Taille maximale : 5 Mo.</p>
         </div>
@@ -138,7 +138,7 @@ include 'includes/header.php';
         </div>
         
         <div class="form-actions">
-            <a href="list-actualites.php" class="btn btn-cancel">Annuler</a>
+            <a href="/list-actualites.php" class="btn btn-cancel">Annuler</a>
             <button type="submit" class="btn btn-primary">
                 <i class="fas fa-save"></i> Enregistrer les modifications
             </button>
@@ -245,7 +245,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 dropZoneContent.style.display = 'none';
             };
             
-            reader.readAsDataURL(file);
+            reader.readAsDataurl(/file);
         }
     }
 });

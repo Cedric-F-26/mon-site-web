@@ -154,6 +154,6 @@ try {
         <p>Pour des raisons de sécurité, il est recommandé de supprimer ce fichier après l'initialisation.</p>
     </div>
     
-    <a href="index.php" class="btn">Retour à la page de connexion</a>
+    <a href="/index.php" class="btn">Retour à la page de connexion</a>
 </body>
 </html>
