@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Franchini, concessionnaire Deutz-Fahr depuis plus de 75 ans. Découvrez notre gamme de tracteurs et matériels agricoles neufs et d'occasion.">
+    <meta name="keywords" content="tracteur, Deutz-Fahr, matériel agricole, occasion, location">
+    <title>Franchini - Concessionnaire Deutz-Fahr | Matériel agricole neuf et occasion</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/footer-style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="main-header">
+        <div class="container">
+            <div class="logo">
+                <a href="index.html" class="logo-link">
+                    <h1 class="logo-text">FRANCHINI</h1>
+                </a>
+                <div class="header-social">
+                    <a href="https://www.facebook.com/franchinimarches" target="_blank" class="social-icon" aria-label="Notre page Facebook">
+                        <i class="fab fa-facebook-f"></i>
+                    </a>
+                    <a href="https://www.instagram.com/franchini_deutzfahr" target="_blank" class="social-icon" aria-label="Notre compte Instagram">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                </div>
+            </div>
+            <nav class="main-nav" aria-label="Navigation principale">
+                <ul>
+                    <li class="dropdown">
+                        <a href="pages/concession.html">La concession</a>
+                    </li>
+                    <li class="dropdown">
+                        <a href="#">Matériel neuf</a>
+                        <div class="dropdown-content">
+                            <a href="pages/materiel.html">Matériel neuf</a>
+                            <a href="pages/materiel-disponible.html">Matériel neuf disponible</a>
+                        </div>
+                    </li>
+                    <li><a href="pages/location.html">Location</a></li>
+                    <li><a href="pages/occasion.html">Occasion</a></li>
+                    <li><a href="pages/magasin.html">Magasin</a></li>
+                    <li><a href="pages/contact.html">Contact</a></li>
+                    <li><a href="tel:0475474037" class="phone-number"><i class="fas fa-phone"></i> 04 75 47 40 37</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <section class="hero-section">
+            <div class="slideshow-container">
+                <div class="slide fade" role="group" aria-roledescription="slide" aria-label="Bienvenue chez Franchini">
+                    <img src="assets/images/slider/DF_Facebook-Cover_1_FR.png" alt="Tracteur Deutz-Fahr série 6" loading="lazy">
+                    <div class="slide-content">
+                        <h2>Bienvenue chez Franchini</h2>
+                        <p>Votre concessionnaire Deutz-Fahr depuis plus de 75 ans</p>
+                        <a href="pages/concession.html" class="btn-primary">Découvrir</a>
+                    </div>
+                </div>
+                <div class="slide fade" role="group" aria-roledescription="slide" aria-label="Matériel agricole neuf">
+                    <img src="assets/images/slider/DF_Facebook-Cover_2_FR.png" alt="Tracteur Deutz-Fahr série 7" loading="lazy">
+                    <div class="slide-content">
+                        <h2>Matériel agricole neuf</h2>
+                        <p>Découvrez notre gamme de tracteurs et matériels Deutz-Fahr</p>
+                        <a href="pages/materiel.html" class="btn-primary">Voir les modèles</a>
+                    </div>
+                </div>
+                <div class="slide fade" role="group" aria-roledescription="slide" aria-label="Service après-vente">
+                    <img src="assets/images/slider/DF_Facebook-Cover_3_FR.png" alt="Atelier de réparation Deutz-Fahr" loading="lazy">
+                    <div class="slide-content">
+                        <h2>Service après-vente</h2>
+                        <p>Notre équipe de techniciens à votre service</p>
+                        <a href="pages/contact.html" class="btn-primary">Nous contacter</a>
+                    </div>
+                </div>
+                
+                <button class="carousel-arrow prev" aria-label="Image précédente">&#10094;</button>
+                <button class="carousel-arrow next" aria-label="Image suivante">&#10095;</button>
+                
+                <div class="slide-dots">
+                    <span class="dot active" aria-label="Slide 1"></span>
+                    <span class="dot" aria-label="Slide 2"></span>
+                    <span class="dot" aria-label="Slide 3"></span>
+                </div>
+            </div>
+            <div class="social-overlay">
+                <a href="https://www.facebook.com/franchinimarches" target="_blank" class="social-icon" aria-label="Facebook (nouvelle fenêtre)">
+                    <i class="fab fa-facebook-f"></i>
+                </a>
+                <a href="https://www.instagram.com/franchini_deutzfahr" target="_blank" class="social-icon" aria-label="Instagram (nouvelle fenêtre)">
+                    <i class="fab fa-instagram"></i>
+                </a>
+            </div>
+        </section>
+
+        <section class="sections-grid">
+            <div class="container">
+                <div class="grid-container">
+                    <div class="news-section">
+                        <h2 class="section-title">Actualités</h2>
+                        <div id="actualites-container" class="news-carousel">
+                            <p>Chargement des actualités en cours...</p>
+                        </div>
+                        <div class="text-center" style="margin-top: 1.5rem;">
+                            <a href="pages/actualites.html" class="btn-primary">Voir toutes nos actualités</a>
+                        </div>
+                    </div>
+
+                    <div class="occasions-section">
+                        <h2 class="section-title">Nos occasions</h2>
+                        <div id="occasions-container" class="occasions-list-simple">
+                            <p>Chargement des occasions en cours...</p>
+                        </div>
+                        <div class="text-center" style="margin-top: 1.5rem;">
+                            <a href="pages/occasion.html" class="btn-primary">Voir toutes nos occasions</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="main-footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-info">
+                    <h4><a href="pages/contact.html" style="color: #4CAF50; text-decoration: none;">FRANCHINI</a></h4>
+                    <p>111 av des monts du matin</p>
+                    <p>26300 Marches</p>
+                    <p>Tél : 04 75 47 40 37</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Franchini SARL. Tous droits réservés. <a href="pages/connexion-prive.html" class="footer-intranet"><i class="fas fa-lock"></i> Connexion privée</a></p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Slider principal
+            const mainSlides = document.querySelectorAll('.slideshow-container .slide');
+            const mainDots = document.querySelectorAll('.slideshow-container .dot');
+            const prevBtn = document.querySelector('.slideshow-container .prev');
+            const nextBtn = document.querySelector('.slideshow-container .next');
+            let mainSlideIndex = 0;
+            let mainSlideInterval;
+
+            function showMainSlide(index) {
+                mainSlides.forEach(slide => {
+                    slide.classList.remove('active');
+                    slide.setAttribute('aria-hidden', 'true');
+                });
+                mainDots.forEach(dot => dot.classList.remove('active'));
+                
+                mainSlideIndex = index;
+                if (mainSlideIndex >= mainSlides.length) mainSlideIndex = 0;
+                if (mainSlideIndex < 0) mainSlideIndex = mainSlides.length - 1;
+                
+                mainSlides[mainSlideIndex].classList.add('active');
+                mainSlides[mainSlideIndex].setAttribute('aria-hidden', 'false');
+                mainDots[mainSlideIndex].classList.add('active');
+            }
+
+            function nextMainSlide() {
+                showMainSlide(mainSlideIndex + 1);
+            }
+
+            function prevMainSlide() {
+                showMainSlide(mainSlideIndex - 1);
+            }
+
+            // Initialiser le slider principal
+            showMainSlide(0);
+            mainSlideInterval = setInterval(nextMainSlide, 5000);
+
+            // Contrôles du slider
+            nextBtn.addEventListener('click', () => {
+                clearInterval(mainSlideInterval);
+                nextMainSlide();
+                mainSlideInterval = setInterval(nextMainSlide, 5000);
+            });
+
+            prevBtn.addEventListener('click', () => {
+                clearInterval(mainSlideInterval);
+                prevMainSlide();
+                mainSlideInterval = setInterval(nextMainSlide, 5000);
+            });
+
+            // Navigation clavier
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'ArrowRight') {
+                    clearInterval(mainSlideInterval);
+                    nextMainSlide();
+                    mainSlideInterval = setInterval(nextMainSlide, 5000);
+                } else if (e.key === 'ArrowLeft') {
+                    clearInterval(mainSlideInterval);
+                    prevMainSlide();
+                    mainSlideInterval = setInterval(nextMainSlide, 5000);
+                }
+            });
+
+            // Événements des points de navigation
+            mainDots.forEach((dot, index) => {
+                dot.addEventListener('click', () => {
+                    clearInterval(mainSlideInterval);
+                    showMainSlide(index);
+                    mainSlideInterval = setInterval(nextMainSlide, 5000);
+                });
+            });
+
+            // Charger les occasions
+            const occasionsContainer = document.getElementById('occasions-container');
+            if (occasionsContainer) {
+                try {
+                    const storedOccasions = localStorage.getItem('franchiniOccasions');
+                    if (storedOccasions) {
+                        const occasions = JSON.parse(storedOccasions);
+                        if (occasions && occasions.length > 0) {
+                            occasionsContainer.innerHTML = '';
+                            occasions.slice(0, 3).forEach(occasion => {
+                                const occasionElement = document.createElement('div');
+                                occasionElement.classList.add('occasion-item-simple');
+                                let nomAffichage = '';
+                                if (occasion.type === 'tracteur') {
+                                    nomAffichage = `${occasion.marque || 'N/A'} ${occasion.modele || ''}`.trim();
+                                } else if (occasion.type === 'materiel') {
+                                    nomAffichage = `${occasion.marque || 'N/A'} ${occasion.typeMateriel || ''}`.trim();
+                                }
+                                occasionElement.innerHTML = `
+                                    <h3>${nomAffichage || 'Information non disponible'}</h3>
+                                    <p>État: ${occasion.etat ? occasion.etat.charAt(0).toUpperCase() + occasion.etat.slice(1) : 'N/A'}</p>
+                                    <p>Prix: ${occasion.prix ? occasion.prix + ' €' : 'Prix sur demande'}</p>
+                                    <a href="pages/occasion.html" class="btn-secondary">Voir détails</a>
+                                `;
+                                occasionsContainer.appendChild(occasionElement);
+                            });
+                        } else {
+                            occasionsContainer.innerHTML = '<p>Aucune occasion à afficher pour le moment.</p>';
+                        }
+                    } else {
+                        occasionsContainer.innerHTML = '<p>Aucune occasion à afficher pour le moment.</p>';
+                    }
+                } catch (e) {
+                    console.error('Erreur lors du chargement des occasions:', e);
+                    occasionsContainer.innerHTML = '<p>Erreur lors du chargement des occasions.</p>';
+                }
+            }
+        });
+    </script>
+    
+    <!-- Script du carrousel d'actualités -->
+    <script src="assets/js/news-carousel.js"></script>
+</body>
+</html>
