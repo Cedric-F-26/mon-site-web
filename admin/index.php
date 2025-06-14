@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once 'config.php'; // S'assure que la session est gérée et $pdo est disponible si config.php le fait
+require_once __DIR__ . '/config.php'; // Charge la configuration de l'application et initialise la session
 
 // Si l'utilisateur est déjà connecté (la session est définie par login.php après une connexion réussie)
 if (isset($_SESSION['admin'])) {

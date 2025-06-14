@@ -1,5 +1,5 @@
 <?php
-require_once 'config.php'; // Assurez-vous que ce chemin est correct pour accéder à votre config PDO
+require_once __DIR__ . '/config.php'; // Configuration de l'application et connexion PDO
 
 header('Content-Type: application/json');
 

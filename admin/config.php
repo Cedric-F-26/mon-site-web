@@ -1,224 +1,245 @@
 <?php
-// Démarrer la session si elle n'est pas déjà démarrée
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
+/**
+ * Fichier de configuration principal
+ * 
+ * Ce fichier charge la configuration de l'application et initialise
+ * les composants essentiels comme la base de données, la session et le système de journalisation.
+ */
+
+// Vérifier si app.php a déjà été inclus
+if (!defined('BASE_PATH')) {
+    // Inclure la configuration de l'application
+    require_once __DIR__ . '/config/app.php';
 }
 
-// Configuration de l'environnement
-define('ENVIRONMENT', 'development'); // 'development' ou 'production'
+// Inclure les fichiers nécessaires (après la configuration et le logger)
+require_once __DIR__ . '/includes/Logger.php'; // Logger doit être disponible tôt
+require_once __DIR__ . '/config/database.php'; // Contient les détails de connexion à la base de données
+require_once __DIR__ . '/config/logger.php'; // Configuration spécifique du logger
+require_once __DIR__ . '/includes/init-logger.php'; // Initialisation du logger
+require_once __DIR__ . '/includes/csrf.php'; // Fonctions CSRF
+require_once __DIR__ . '/includes/utils.php'; // Fonctions utilitaires
+require_once __DIR__ . '/includes/security_functions.php'; // Fonctions de sécurité
 
-// Configuration des erreurs
-if (defined('ENVIRONMENT')) {
-    if (ENVIRONMENT === 'development') {
-        error_reporting(E_ALL);
-        ini_set('display_errors', 1);
-    } else {
-        error_reporting(0);
-        ini_set('display_errors', 0);
+// Vérifier si la session est active
+if (session_status() === PHP_SESSION_NONE) {
+    Logger::critical('La session n\'a pas pu être démarrée. Vérifiez config/app.php');
+    // Une erreur critique ici signifie que quelque chose est gravement mal configuré dans app.php
+    die('Erreur de configuration du serveur. Veuillez réessayer plus tard. (Erreur de session)');
+}
+
+// Initialisation du système de journalisation
+if (!file_exists(LOG_DIR)) {
+    mkdir(LOG_DIR, 0755, true);
+}
+
+// Inclure les fichiers nécessaires
+require_once __DIR__ . '/includes/Logger.php';
+
+// Charger la configuration de la base de données
+require_once __DIR__ . '/config/database.php';
+require_once __DIR__ . '/config/logger.php';
+require_once __DIR__ . '/includes/init-logger.php';
+require_once __DIR__ . '/includes/csrf.php';
+
+// Vérifier si la session est déjà démarrée
+if (session_status() === PHP_SESSION_NONE) {
+    // La session sera démarrée par app.php
+    Logger::warning('La session n\'est pas démarrée, vérifiez la configuration');
+}
+
+// Vérifier si la session a expiré
+if (isset($_SESSION['LAST_ACTIVITY']) && (time() - $_SESSION['LAST_ACTIVITY'] > SESSION_TIMEOUT)) {
+    // Détruire la session et rediriger vers la page de connexion
+    session_unset();
+    session_destroy();
+    
+    // Rediriger vers la page de connexion avec un message
+    if (!defined('API_REQUEST')) {
+        setFlashMessage('error', 'Votre session a expiré. Veuillez vous reconnecter.');
+        header('Location: login.php');
+        exit;
     }
+}
+
+// Mettre à jour le timestamp de la dernière activité
+$_SESSION['LAST_ACTIVITY'] = time();
+
+// Régénérer l'ID de session périodiquement pour prévenir les attaques de fixation de session
+if (!isset($_SESSION['CREATED'])) {
+    $_SESSION['CREATED'] = time();
+} else if (time() - $_SESSION['CREATED'] > SESSION_REGENERATE_TIME) {
+    session_regenerate_id(true);
+    $_SESSION['CREATED'] = time();
 }
 
 // Configuration de la base de données
-define('DB_HOST', 'localhost');
-define('DB_NAME', 'franchini_db');
-define('DB_USER', 'root');
-define('DB_PASS', '');
-
-// URL de base du site
-define('BASE_URL', 'http://' . $_SERVER['HTTP_HOST'] . str_replace('index.php', '', $_SERVER['SCRIPT_NAME']));
-
-// Chemins des dossiers
-define('ROOT_PATH', dirname(__DIR__) . '/');
-define('ADMIN_PATH', __DIR__ . '/');
-define('UPLOAD_PATH', __DIR__ . '/uploads/');
-define('UPLOAD_URL', 'admin/uploads/');
-
-// Création des dossiers nécessaires s'ils n'existent pas
-$directories = [
-    UPLOAD_PATH . 'actualites/',
-    UPLOAD_PATH . 'promotions/',
-    UPLOAD_PATH . 'occasions/'
-];
-
-foreach ($directories as $dir) {
-    if (!file_exists($dir)) {
-        mkdir($dir, 0755, true);
-    }
-}
-
-// Connexion à la base de données
 try {
-    $dsn = "mysql:host=" . DB_HOST . ";dbname=" . DB_NAME . ";charset=utf8mb4";
-    $options = [
+    // Créer une instance PDO avec journalisation
+    class LoggedPDO extends PDO {
+        public function prepare($statement, $options = []) {
+            try {
+                $start = microtime(true);
+                $stmt = parent::prepare($statement, $options);
+                
+                // Retourner une déclaration avec journalisation
+                return new class($stmt, $statement, $start) extends PDOStatement {
+                    private $pdoStatement;
+                    private $query;
+                    private $startTime;
+                    private $params = [];
+                    
+                    public function __construct($pdoStatement, $query, $startTime) {
+                        $this->pdoStatement = $pdoStatement;
+                        $this->query = $query;
+                        $this->startTime = $startTime;
+                    }
+                    
+                    public function execute($params = null) {
+                        $this->params = $params ?: [];
+                        $start = microtime(true);
+                        
+                        try {
+                            $result = $this->pdoStatement->execute($params);
+                            $this->logQuery($start);
+                            return $result;
+                        } catch (PDOException $e) {
+                            $this->logError($e, $start);
+                            throw $e;
+                        }
+                    }
+                    
+                    private function logQuery($startTime) {
+                        $executionTime = (microtime() - $startTime) * 1000; // en ms
+                        $isSlow = $executionTime > 1000; // 1 seconde
+                        
+                        $context = [
+                            'query' => $this->query,
+                            'params' => $this->params,
+                            'time_ms' => round($executionTime, 2),
+                            'slow' => $isSlow
+                        ];
+                        
+                        if ($isSlow) {
+                            Logger::warning(sprintf(
+                                'Requête SQL lente (%.2fms): %s',
+                                $executionTime,
+                                $this->query
+                            ), $context);
+                        } else {
+                            Logger::debug(sprintf(
+                                'Requête SQL exécutée en %.2fms',
+                                $executionTime
+                            ), $context);
+                        }
+                    }
+                    
+                    private function logError($exception, $startTime) {
+                        $executionTime = (microtime() - $startTime) * 1000;
+                        
+                        Logger::error('Erreur SQL', [
+                            'query' => $this->query,
+                            'params' => $this->params,
+                            'error' => $exception->getMessage(),
+                            'code' => $exception->getCode(),
+                            'time_ms' => round($executionTime, 2),
+                            'trace' => $exception->getTraceAsString()
+                        ]);
+                    }
+                    
+                    // Délégation des autres appels à PDOStatement
+                    public function __call($method, $args) {
+                        return call_user_func_array([$this->pdoStatement, $method], $args);
+                    }
+                };
+            } catch (PDOException $e) {
+                Logger::error('Erreur de préparation de requête SQL', [
+                    'query' => $statement,
+                    'error' => $e->getMessage(),
+                    'code' => $e->getCode()
+                ]);
+                throw $e;
+            }
+        }
+    }
+    
+    // Créer la connexion PDO SQLite avec journalisation
+    $dsn = 'sqlite:' . DB_PATH;
+    $pdo = new LoggedPDO($dsn, null, null, [
         PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-        PDO::ATTR_EMULATE_PREPARES => false,
-        PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8mb4"
-    ];
+        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
+    ]);
     
-    $pdo = new PDO($dsn, DB_USER, DB_PASS, $options);
+    // Enveloppe de compatibilité pour le code existant
+    $db = new class($pdo) {
+        private $pdo;
+        
+        public function __construct($pdo) {
+            $this->pdo = $pdo;
+        }
+        
+        public function query($q) { 
+            return $this->pdo->query($q); 
+        }
+        
+        public function prepare($q) { 
+            return $this->pdo->prepare($q); 
+        }
+        
+        public function execute($q, $params = []) {
+            $stmt = $this->prepare($q);
+            return $stmt->execute($params);
+        }
+        
+        public function lastInsertId() {
+            return $this->pdo->lastInsertId();
+        }
+        
+        // Ajout de méthodes utiles
+        public function fetchOne($query, $params = []) {
+            $stmt = $this->pdo->prepare($query);
+            $stmt->execute($params);
+            return $stmt->fetch();
+        }
+        
+        public function fetchAll($query, $params = []) {
+            $stmt = $this->pdo->prepare($query);
+            $stmt->execute($params);
+            return $stmt->fetchAll();
+        }
+        
+        public function fetchColumn($query, $params = [], $column = 0) {
+            $stmt = $this->pdo->prepare($query);
+            $stmt->execute($params);
+            return $stmt->fetchColumn($column);
+        }
+        
+        public function getPdo() {
+            return $this->pdo;
+        }
+    };
+    
+    Logger::info('Connexion à la base de données établie', [
+        'host' => DB_HOST,
+        'database' => DB_NAME,
+        'charset' => 'utf8mb4'
+    ]);
+    
 } catch (PDOException $e) {
-    if (defined('ENVIRONMENT') && ENVIRONMENT === 'development') {
-        die("Erreur de connexion à la base de données : " . $e->getMessage());
+    $errorMsg = 'Erreur de connexion à la base de données: ' . $e->getMessage();
+    Logger::critical($errorMsg, [
+        'error' => $e->getMessage(),
+        'code' => $e->getCode(),
+        'trace' => $e->getTraceAsString()
+    ]);
+    
+    if (defined('ENVIRONMENT') && ENVIRONMENT === 'production') {
+        die('Une erreur est survenue lors de la connexion à la base de données. Veuillez réessayer plus tard.');
     } else {
-        die("Une erreur est survenue. Veuillez réessayer plus tard.");
+        die('Erreur de base de données: ' . $e->getMessage());
     }
 }
 
-// Fonctions utilitaires
-function redirect($path) {
-    header("Location: " . $path);
-    exit;
-}
-
-function isLoggedIn() {
-    return isset($_SESSION['admin']);
-}
-
-function requireLogin() {
-    if (!isLoggedIn()) {
-        $_SESSION['redirect_url'] = $_SERVER['REQUEST_URI'];
-        redirect('login.php');
-    }
-}
-
-// Protection contre les failles XSS
-function escape($data) {
-    if (is_array($data)) {
-        return array_map('escape', $data);
-    }
-    return htmlspecialchars($data, ENT_QUOTES, 'UTF-8');
-}
-
-// Nettoyage des entrées
-function cleanInput($data) {
-    if (is_array($data)) {
-        return array_map('cleanInput', $data);
-    }
-    $data = trim($data);
-    $data = stripslashes($data);
-    $data = htmlspecialchars($data, ENT_QUOTES, 'UTF-8');
-    return $data;
-}
-
-// Gestion des messages flash
-function setFlashMessage($type, $message) {
-    $_SESSION['flash'] = [
-        'type' => $type,
-        'message' => $message
-    ];
-}
-
-function getFlashMessage() {
-    if (isset($_SESSION['flash'])) {
-        $flash = $_SESSION['flash'];
-        unset($_SESSION['flash']);
-        return $flash;
-    }
-    return null;
-}
-
-// Fonction pour générer un nom de fichier unique
-function generateUniqueFilename($filename, $uploadPath) {
-    $extension = pathinfo($filename, PATHINFO_EXTENSION);
-    $basename = pathinfo($filename, PATHINFO_FILENAME);
-    
-    // Nettoyer le nom du fichier
-    $basename = preg_replace('/[^a-zA-Z0-9_-]/', '', $basename);
-    $basename = substr($basename, 0, 50); // Limiter la longueur du nom
-    
-    $filename = $basename . '.' . $extension;
-    $counter = 1;
-    
-    // Vérifier si le fichier existe déjà
-    while (file_exists($uploadPath . $filename)) {
-        $filename = $basename . '_' . $counter . '.' . $extension;
-        $counter++;
-    }
-    
-    return $filename;
-}
-
-// Fonction pour valider et télécharger une image
-function uploadImage($file, $targetDir) {
-    // Vérifier les erreurs de téléchargement initiales
-    if ($file['error'] !== UPLOAD_ERR_OK) {
-        // Fournir un message plus spécifique basé sur le code d'erreur
-        switch ($file['error']) {
-            case UPLOAD_ERR_INI_SIZE:
-            case UPLOAD_ERR_FORM_SIZE:
-                return ['success' => false, 'message' => 'Le fichier est trop volumineux.'];
-            case UPLOAD_ERR_PARTIAL:
-                return ['success' => false, 'message' => 'Le fichier n\'a été que partiellement téléchargé.'];
-            case UPLOAD_ERR_NO_FILE:
-                // Ce cas est généralement géré avant d'appeler uploadImage
-                return ['success' => false, 'message' => 'Aucun fichier n\'a été téléchargé.'];
-            case UPLOAD_ERR_NO_TMP_DIR:
-                return ['success' => false, 'message' => 'Dossier temporaire manquant sur le serveur.'];
-            case UPLOAD_ERR_CANT_WRITE:
-                return ['success' => false, 'message' => 'Échec de l\'écriture du fichier sur le disque.'];
-            case UPLOAD_ERR_EXTENSION:
-                return ['success' => false, 'message' => 'Une extension PHP a arrêté le téléchargement du fichier.'];
-            default:
-                return ['success' => false, 'message' => 'Erreur inconnue lors du téléchargement du fichier.'];
-        }
-    }
-    
-    // Vérifier le type MIME
-    $finfo = finfo_open(FILEINFO_MIME_TYPE);
-    if (!$finfo) {
-        return ['success' => false, 'message' => 'Impossible d\'ouvrir la base de données fileinfo.'];
-    }
-    $mime = finfo_file($finfo, $file['tmp_name']);
-    finfo_close($finfo);
-    
-    $allowedTypes = [
-        'image/jpeg' => 'jpg',
-        'image/png' => 'png',
-        'image/gif' => 'gif',
-        'image/webp' => 'webp'
-    ];
-    
-    if (!array_key_exists($mime, $allowedTypes)) {
-        return ['success' => false, 'message' => 'Format de fichier non autorisé. Utilisez JPEG, PNG, GIF ou WebP. (Type détecté: ' . htmlspecialchars($mime) . ')'];
-    }
-    
-    // Vérifier la taille du fichier (max 5 Mo)
-    $maxSize = 5 * 1024 * 1024; // 5 Mo
-    if ($file['size'] > $maxSize) {
-        return ['success' => false, 'message' => 'La taille du fichier ne doit pas dépasser 5 Mo.'];
-    }
-    
-    // S'assurer que le répertoire cible existe et est accessible en écriture
-    if (!is_dir($targetDir) || !is_writable($targetDir)) {
-        // Essayer de créer le répertoire s'il n'existe pas
-        if (!is_dir($targetDir) && !mkdir($targetDir, 0755, true)) {
-             return ['success' => false, 'message' => 'Le répertoire de destination n\'existe pas et n\'a pas pu être créé.'];
-        }
-        if (!is_writable($targetDir)) {
-            return ['success' => false, 'message' => 'Le répertoire de destination n\'est pas accessible en écriture. Vérifiez les permissions.'];
-        }
-    }
-
-    // Générer un nom de fichier unique
-    $extension = $allowedTypes[$mime];
-    // Utiliser la fonction generateUniqueFilename si elle existe, sinon une simple uniqid
-    if (function_exists('generateUniqueFilename')) {
-        $newFilename = generateUniqueFilename(basename($file['name']), $targetDir);
-    } else {
-        $originalName = pathinfo($file['name'], PATHINFO_FILENAME);
-        $safeOriginalName = preg_replace('/[^A-Za-z0-9_\-]/', '_', $originalName);
-        $newFilename = $safeOriginalName . '_' . uniqid() . '.' . $extension;
-    }
-    $targetPath = rtrim($targetDir, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . $newFilename;
-    
-    // Déplacer le fichier téléchargé
-    if (!move_uploaded_file($file['tmp_name'], $targetPath)) {
-        return ['success' => false, 'message' => 'Erreur lors de l\'enregistrement du fichier.'];
-    }
-    
-    // Redimensionner l'image si nécessaire (optionnel) - Laisser pour plus tard
-    // ...
-    
-    return ['success' => true, 'filename' => $newFilename];
-}
+// Les fonctions utilitaires sont maintenant dans includes/utils.php
+// Les fonctions d'upload sont dans includes/upload_functions.php
+// Les fonctions de sécurité sont dans includes/security_functions.php

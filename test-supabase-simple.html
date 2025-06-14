@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Simple Supabase</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .container {
+            background: #f8f9fa;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        .success { color: #28a745; font-weight: bold; }
+        .error { color: #dc3545; font-weight: bold; }
+        pre {
+            background: #f1f1f1;
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px 0;
+        }
+        button:hover { background: #0056b3; }
+    </style>
+</head>
+<body>
+    <h1>Test Simple de Connexion Supabase</h1>
+    
+    <div class="container">
+        <h2>1. Chargement du SDK</h2>
+        <div id="sdk-status">En attente...</div>
+        
+        <h2>2. Test de connexion</h2>
+        <button id="test-connection">Tester la connexion</button>
+        <div id="connection-status"></div>
+        
+        <h2>3. Logs</h2>
+        <pre id="logs"></pre>
+    </div>
+
+    <!-- Inclure le SDK Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <script>
+        // Éléments du DOM
+        const logsEl = document.getElementById('logs');
+        const sdkStatusEl = document.getElementById('sdk-status');
+        const connectionStatusEl = document.getElementById('connection-status');
+        const testConnectionBtn = document.getElementById('test-connection');
+        
+        // Configuration Supabase
+        const SUPABASE_URL = 'https://svvupcjjqyyehxbxlkro.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN2dnVwY2pqcXl5ZWh4Ynhsa3JvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk0Njg3NjcsImV4cCI6MjA2NTA0NDc2N30.wSK-HT0_UCNIVsfrcHQ1OBOlgdbKR4uMICDtbwg6ivY';
+        
+        // Initialisation de Supabase
+        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        
+        // Fonction pour ajouter des logs
+        function addLog(message, type = 'info') {
+            const timestamp = new Date().toISOString().substr(11, 8);
+            const logEntry = document.createElement('div');
+            logEntry.innerHTML = `<span style="color: #6c757d;">[${timestamp}]</span> ${message}`;
+            if (type === 'error') logEntry.style.color = '#dc3545';
+            if (type === 'success') logEntry.style.color = '#28a745';
+            logsEl.prepend(logEntry);
+        }
+        
+        // Vérifier le chargement du SDK
+        function checkSDK() {
+            if (typeof supabase !== 'undefined') {
+                sdkStatusEl.innerHTML = '<span class="success">✓ SDK Supabase chargé avec succès</span>';
+                addLog('SDK Supabase chargé avec succès', 'success');
+                addLog(`URL: ${SUPABASE_URL}`, 'info');
+                addLog(`Clé API: ${SUPABASE_KEY.substring(0, 10)}...`, 'info');
+                return true;
+            } else {
+                sdkStatusEl.innerHTML = '<span class="error">✗ Erreur: SDK non chargé</span>';
+                addLog('Erreur: SDK Supabase non chargé', 'error');
+                return false;
+            }
+        }
+        
+        // Tester la connexion à Supabase
+        async function testConnection() {
+            if (!checkSDK()) return;
+            
+            connectionStatusEl.textContent = 'Connexion en cours...';
+            addLog('Test de connexion à Supabase...', 'info');
+            
+            try {
+                // Tester une requête simple
+                const { data, error } = await supabase
+                    .from('users')
+                    .select('*')
+                    .limit(1);
+                
+                if (error) throw error;
+                
+                connectionStatusEl.innerHTML = '<span class="success">✓ Connexion réussie</span>';
+                addLog('Connexion à Supabase réussie', 'success');
+                addLog('Données reçues: ' + JSON.stringify(data, null, 2), 'info');
+                
+            } catch (error) {
+                connectionStatusEl.innerHTML = '<span class="error">✗ Erreur de connexion: ' + error.message + '</span>';
+                addLog('Erreur de connexion: ' + error.message, 'error');
+            }
+        }
+        
+        // Initialisation
+        document.addEventListener('DOMContentLoaded', function() {
+            // Vérifier le SDK
+            checkSDK();
+            
+            // Configurer les boutons
+            testConnectionBtn.addEventListener('click', testConnection);
+        });
+    </script>
+</body>
+</html>

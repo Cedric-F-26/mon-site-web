@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Auth Debug</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        #debug { 
+            background: #f0f0f0; 
+            padding: 15px; 
+            margin-top: 20px; 
+            border-radius: 5px;
+            white-space: pre-wrap;
+        }
+        button { padding: 10px 15px; margin: 5px; }
+        input { padding: 8px; margin: 5px; }
+    </style>
+</head>
+<body>
+    <h1>Test de Connexion - Mode Débogage</h1>
+    
+    <div>
+        <input type="email" id="email" value="franchini.cedric@gmail.com" placeholder="Email">
+        <input type="password" id="password" placeholder="Mot de passe">
+        <button id="login-btn">Se connecter</button>
+    </div>
+    
+    <h3>Journaux de débogage :</h3>
+    <div id="debug">Démarrage du test...\n</div>
+
+    <!-- Inclure le SDK Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <script>
+        // Fonction pour ajouter des logs
+        function debugLog(message) {
+            const debugDiv = document.getElementById('debug');
+            debugDiv.textContent += message + '\n';
+            console.log(message);
+        }
+
+        // Vérifier si le DOM est chargé
+        debugLog("1. Le DOM est chargé");
+
+        // Vérifier si Supabase est chargé
+        debugLog("2. Vérification de Supabase...");
+        debugLog("   - window.supabase existe: " + (window.supabase ? 'Oui' : 'Non'));
+
+        // Configuration Supabase
+        const SUPABASE_URL = 'https://svvupcjjqyyehxbxlkro.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN2dnVwY2pqcXl5ZWh4Ynhsa3JvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk0Njg3NjcsImV4cCI6MjA2NTA0NDc2N30.wSK-HT0_UCNIVsfrcHQ1OBOlgdbKR4uMICDtbwg6ivY';
+        
+        // Initialiser Supabase
+        let supabase;
+        try {
+            supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+            debugLog("3. Supabase initialisé avec succès");
+            debugLog("   - URL: " + SUPABASE_URL);
+        } catch (e) {
+            debugLog("ERREUR lors de l'initialisation de Supabase: " + e.message);
+        }
+
+        // Vérifier si le bouton existe
+        const loginBtn = document.getElementById('login-btn');
+        debugLog("4. Bouton de connexion trouvé: " + (loginBtn ? 'Oui' : 'Non'));
+
+        // Fonction de connexion
+        async function login() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            debugLog("\n--- TENTATIVE DE CONNEXION ---");
+            debugLog("Email: " + email);
+            debugLog("Supabase disponible: " + (supabase ? 'Oui' : 'Non'));
+            
+            if (!supabase) {
+                debugLog("ERREUR: Supabase n'est pas initialisé");
+                return;
+            }
+            
+            try {
+                debugLog("Appel de signInWithPassword...");
+                const { data, error } = await supabase.auth.signInWithPassword({
+                    email: email,
+                    password: password
+                });
+                
+                if (error) {
+                    debugLog("ERREUR: " + JSON.stringify(error));
+                } else {
+                    debugLog("SUCCÈS: Utilisateur connecté");
+                    debugLog("Données: " + JSON.stringify(data.user));
+                }
+                
+            } catch (e) {
+                debugLog("EXCEPTION: " + e.message);
+                console.error(e);
+            }
+        }
+
+        // Ajouter l'écouteur d'événement
+        if (loginBtn) {
+            loginBtn.addEventListener('click', login);
+            debugLog("5. Écouteur d'événement ajouté au bouton");
+        } else {
+            debugLog("ERREUR: Impossible de trouver le bouton de connexion");
+        }
+
+        // Tester si le clic fonctionne
+        debugLog("\n--- TEST DE CLIC ---");
+        loginBtn.addEventListener('click', function() {
+            debugLog("Clic détecté sur le bouton!");
+        });
+        
+        // Vérifier les styles qui pourraient bloquer les clics
+        const styles = window.getComputedStyle(loginBtn);
+        if (styles.pointerEvents === 'none') {
+            debugLog("ATTENTION: pointer-events est sur 'none'");
+        }
+        if (styles.opacity === '0' || styles.visibility === 'hidden' || styles.display === 'none') {
+            debugLog("ATTENTION: Le bouton pourrait être invisible");
+        }
+        
+        debugLog("\n--- TEST TERMINÉ ---");
+    </script>
+</body>
+</html>

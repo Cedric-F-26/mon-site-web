@@ -1,16 +1,47 @@
 <?php
-session_start();
-require_once 'config.php';
-
-if (!isset($_SESSION['admin'])) {
-    header('Location: index.php');
-    exit;
+// Démarrer la session
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
 }
 
-$active_tab = isset($_GET['tab']) ? $_GET['tab'] : 'actualites';
+// Inclure la configuration et les fonctions de sécurité
+require_once __DIR__ . '/config.php';
+
+// Vérifier que l'utilisateur est connecté
+requireLogin();
+
+// Journaliser l'accès au tableau de bord
+logSecurityEvent('dashboard_access', [
+    'user_id' => $_SESSION['admin']['id'] ?? 0,
+    'username' => $_SESSION['admin']['username'] ?? 'unknown'
+]);
+
+// Mettre à jour le temps de la dernière activité
+$_SESSION['last_activity'] = time();
+
+// Nettoyer et valider l'onglet actif
+$valid_tabs = ['actualites', 'magasin', 'parametres'];
+$active_tab = isset($_GET['tab']) && in_array($_GET['tab'], $valid_tabs, true) 
+    ? $_GET['tab'] 
+    : 'actualites';
 
 // Gestion des actions POST
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Vérifier le jeton CSRF pour toutes les actions POST
+    if (empty($_POST['csrf_token']) || !validateCSRFToken($_POST['csrf_token'])) {
+        logSecurityEvent('invalid_csrf', [
+            'action' => $_POST['action'] ?? 'unknown',
+            'ip' => $_SERVER['REMOTE_ADDR']
+        ]);
+        setFlashMessage('error', 'Erreur de sécurité. Veuillez réessayer.');
+        redirect('dashboard.php');
+    }
+
+    // Vérifier si une action est spécifiée
+    if (!isset($_POST['action'])) {
+        setFlashMessage('error', 'Aucune action spécifiée.');
+        redirect('dashboard.php');
+    }
     try {
         switch ($_POST['action']) {
             case 'add_news':
@@ -109,9 +140,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     exit;
 }
 
-// Récupération des actualités
-$news = $pdo->query("SELECT * FROM news ORDER BY created_at DESC")->fetchAll();
-$promotions = $pdo->query("SELECT * FROM promotions ORDER BY start_date DESC")->fetchAll();
+// Récupération des actualités avec gestion des erreurs
+try {
+    // Préparer et exécuter les requêtes avec des déclarations préparées pour la sécurité
+    $stmt = $pdo->prepare("SELECT * FROM news ORDER BY created_at DESC");
+    $stmt->execute();
+    $news = $stmt->fetchAll();
+    
+    $stmt = $pdo->prepare("SELECT * FROM promotions ORDER BY start_date DESC");
+    $stmt->execute();
+    $promotions = $stmt->fetchAll();
+} catch (PDOException $e) {
+    // Journaliser l'erreur
+    logSecurityEvent('database_error', [
+        'error' => $e->getMessage(),
+        'query' => 'SELECT FROM news/promotions'
+    ]);
+    
+    // Afficher un message d'erreur générique à l'utilisateur
+    setFlashMessage('error', 'Une erreur est survenue lors de la récupération des données.');
+    
+    // Initialiser les tableaux vides pour éviter les erreurs
+    $news = [];
+    $promotions = [];
+}
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -173,7 +225,12 @@ $promotions = $pdo->query("SELECT * FROM promotions ORDER BY start_date DESC")->
     <div class="dashboard">
         <header class="dashboard-header">
             <h1>Modification du site</h1>
-            <a href="logout.php" class="btn-logout">Déconnexion</a>
+            <form action="logout.php" method="post" class="logout-form" onsubmit="return confirm('Êtes-vous sûr de vouloir vous déconnecter ?');">
+                <?php echo generateCSRFTokenInput(); ?>
+                <button type="submit" class="btn-logout">
+                    <i class="fas fa-sign-out-alt"></i> Déconnexion
+                </button>
+            </form>
         </header>
 
         <div class="tabs">

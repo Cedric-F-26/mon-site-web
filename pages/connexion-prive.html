@@ -222,85 +222,181 @@
                     <i class="fas fa-sign-in-alt"></i>
                     Se connecter
                 </button>
+                <div style="text-align: center; margin: 15px 0;">
+                    <a href="#" id="forgot-password-link" style="color: #333; font-size: 0.9em; text-decoration: none; cursor: pointer;">Mot de passe oublié</a>
+                </div>
+                <div id="reset-password-form" style="display: none; margin-top: 1.5rem; padding: 1.5rem; background: #f8f9fa; border-radius: 8px; border: 1px solid #e9ecef;">
+                    <h3 style="font-size: 1.1rem; margin: 0 0 1rem 0; color: #333; text-align: center;">Réinitialiser le mot de passe</h3>
+                    <div style="margin-bottom: 1rem;">
+                        <label for="reset-email" style="display: block; margin-bottom: 0.5rem; font-weight: 500; color: #495057;">Votre adresse email</label>
+                        <input type="email" id="reset-email" style="width: 100%; padding: 0.5rem; border: 1px solid #ced4da; border-radius: 4px; font-size: 1rem;" placeholder="email@exemple.com">
+                    </div>
+                    <button type="button" id="reset-password-btn" style="width: 100%; padding: 0.75rem; background-color: #4CAF50; color: white; border: none; border-radius: 4px; font-size: 1rem; cursor: pointer; transition: background-color 0.2s;">
+                        Envoyer le lien de réinitialisation
+                    </button>
+                    <div id="reset-message" style="margin-top: 1rem; padding: 0.75rem; border-radius: 4px; display: none;"></div>
+                </div>
             </form>
             <div class="login-links">
-                <a href="#">Mot de passe oublié ?</a> <!-- Mettre le vrai lien si disponible -->
                 <a href="../index.html"><i class="fas fa-arrow-left"></i> Retour au site</a>
             </div>
         </div>
     </main>
 
+    <!-- Intégration du SDK Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../js/supabase-config.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
+            // Éléments du formulaire
             const loginForm = document.getElementById('login-form');
-            const errorMessageDiv = document.getElementById('error-message');
-            const errorMessageSpan = errorMessageDiv.querySelector('span');
-            const togglePassword = document.getElementById('togglePassword');
+            const emailInput = document.getElementById('username');
             const passwordInput = document.getElementById('password');
-
-            if (togglePassword && passwordInput) {
-                togglePassword.addEventListener('click', function () {
-                    const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-                    passwordInput.setAttribute('type', type);
-                    this.classList.toggle('fa-eye');
-                    this.classList.toggle('fa-eye-slash');
-                    // S'assurer que l'icône correcte est affichée au départ
-                    if (type === 'password') {
-                        this.classList.remove('fa-eye-slash');
-                        this.classList.add('fa-eye');
-                    } else {
-                        this.classList.remove('fa-eye');
-                        this.classList.add('fa-eye-slash');
+            const togglePassword = document.getElementById('togglePassword');
+            const errorMessageDiv = document.getElementById('error-message');
+            const forgotPasswordLink = document.getElementById('forgot-password-link');
+            const resetPasswordForm = document.getElementById('reset-password-form');
+            const resetEmailInput = document.getElementById('reset-email');
+            const resetPasswordBtn = document.getElementById('reset-password-btn');
+            const resetMessage = document.getElementById('reset-message');
+            
+            // Vérifier si l'utilisateur est déjà connecté
+            async function checkAuth() {
+                try {
+                    const { data: { session } } = await window.supabase.auth.getSession();
+                    if (session) {
+                        window.location.href = '../index.html';
                     }
-                });
-                // Initialiser l'icône correctement
-                if (passwordInput.getAttribute('type') === 'password') {
-                    togglePassword.classList.add('fa-eye');
-                } else {
-                    togglePassword.classList.add('fa-eye-slash');
+                } catch (error) {
+                    console.error('Erreur de vérification de session:', error);
                 }
             }
-
+            
+            // Initialisation
+            checkAuth();
+            
+            // Basculer la visibilité du mot de passe
+            if (togglePassword) {
+                togglePassword.addEventListener('click', function() {
+                    const type = passwordInput.type === 'password' ? 'text' : 'password';
+                    passwordInput.type = type;
+                    this.classList.toggle('fa-eye');
+                    this.classList.toggle('fa-eye-slash');
+                });
+            }
+            
+            // Gestion de la soumission du formulaire de connexion
             if (loginForm) {
-                loginForm.addEventListener('submit', function (e) {
+                loginForm.addEventListener('submit', async function(e) {
                     e.preventDefault();
-                    errorMessageDiv.style.display = 'none'; 
-
-                    const formData = new FormData(loginForm);
-
-                    fetch('../admin/login.php', { 
-                        method: 'POST',
-                        headers: {
-                            'X-Requested-With': 'XMLHttpRequest'
-                        },
-                        body: formData
-                    })
-                    .then(response => {
-                        if (!response.ok) {
-                            return response.text().then(text => { 
-                                throw new Error('Erreur HTTP ' + response.status + ': ' + text);
-                            });
+                    
+                    const email = emailInput.value.trim();
+                    const password = passwordInput.value;
+                    
+                    // Validation
+                    if (!email || !password) {
+                        showError('Veuillez remplir tous les champs');
+                        return;
+                    }
+                    
+                    try {
+                        console.log('Tentative de connexion avec:', email);
+                        const { data, error } = await window.supabase.auth.signInWithPassword({
+                            email: email,
+                            password: password
+                        });
+                        
+                        if (error) throw error;
+                        
+                        console.log('Connexion réussie:', data);
+                        window.location.href = '../index.html';
+                        
+                    } catch (error) {
+                        console.error('Erreur de connexion:', error);
+                        showError('Email ou mot de passe incorrect');
+                    }
+                });
+            }
+            
+            // Afficher un message d'erreur
+            function showError(message) {
+                if (!errorMessageDiv) return;
+                
+                errorMessageDiv.querySelector('span').textContent = message;
+                errorMessageDiv.style.display = 'block';
+                
+                // Masquer le message après 5 secondes
+                setTimeout(() => {
+                    errorMessageDiv.style.display = 'none';
+                }, 5000);
+            }
+            
+            // Afficher le formulaire de réinitialisation de mot de passe
+            if (forgotPasswordLink) {
+                forgotPasswordLink.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    if (resetPasswordForm) resetPasswordForm.style.display = 'block';
+                    if (forgotPasswordLink) forgotPasswordLink.style.display = 'none';
+                });
+            }
+            
+            // Gestion de la réinitialisation du mot de passe
+            if (resetPasswordBtn) {
+                resetPasswordBtn.addEventListener('click', async function() {
+                    const email = resetEmailInput.value.trim();
+                    
+                    if (!email) {
+                        showResetMessage('Veuillez entrer votre email', 'error');
+                        return;
+                    }
+                    
+                    try {
+                        // URL de redirection pour GitHub Pages
+                        const redirectUrl = 'https://cedric-f-26.github.io/mon-site-web/pages/update-password.html';
+                        console.log('Envoi du lien de réinitialisation à:', email);
+                        console.log('URL de redirection:', redirectUrl);
+                        
+                        // Envoyer l'email de réinitialisation
+                        const { error } = await window.supabase.auth.resetPasswordForEmail(email, {
+                            redirectTo: redirectUrl
+                        });
+                        
+                        if (error) {
+                            console.error('Erreur Supabase:', error);
+                            throw error;
                         }
-                        return response.json();
-                    })
-                    .then(data => {
-                        if (data.success) {
-                            if (data.redirect_url) {
-                                window.location.href = '../admin/' + data.redirect_url; 
-                            } else {
-                                errorMessageSpan.textContent = 'Connexion réussie, mais pas de redirection spécifiée.';
-                                errorMessageDiv.style.display = 'flex';
-                            }
-                        } else {
-                            errorMessageSpan.textContent = data.message || 'Une erreur est survenue.';
-                            errorMessageDiv.style.display = 'flex';
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Erreur lors de la connexion:', error);
-                        errorMessageSpan.textContent = 'Erreur de communication avec le serveur. Vérifiez la console pour plus de détails.';
-                        errorMessageDiv.style.display = 'flex';
-                    });
+                        
+                        showResetMessage('Un lien de réinitialisation a été envoyé à votre adresse email.', 'success');
+                        
+                    } catch (error) {
+                        console.error('Erreur lors de l\'envoi du lien de réinitialisation:', error);
+                        showResetMessage('Une erreur est survenue. Veuillez réessayer.', 'error');
+                    }
+                });
+            }
+            
+            // Fonction pour afficher les messages de réinitialisation
+            function showResetMessage(message, type) {
+                if (!resetMessage) return;
+                
+                resetMessage.textContent = message;
+                resetMessage.className = type;
+                resetMessage.style.display = 'block';
+                
+                // Masquer le message après 5 secondes
+                setTimeout(() => {
+                    resetMessage.style.display = 'none';
+                }, 5000);
+            }
+            
+            // Retour au formulaire de connexion
+            const backToLogin = document.getElementById('back-to-login');
+            if (backToLogin) {
+                backToLogin.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    if (resetPasswordForm) resetPasswordForm.style.display = 'none';
+                    if (loginFormContainer) loginFormContainer.style.display = 'block';
+                    if (forgotPasswordLink) forgotPasswordLink.style.display = 'block';
                 });
             }
         });

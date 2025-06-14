@@ -1,322 +1,432 @@
 <?php
-session_start();
-require_once 'config.php'; // Assurez-vous que ce chemin est correct
+/**
+ * Page de connexion administrateur
+ * 
+ * Gère l'authentification des utilisateurs avec protection contre les attaques par force brute
+ * et validation des jetons CSRF.
+ */
 
-$error_message = '';
+// Inclure la configuration
+require_once __DIR__ . '/config.php';
 
-// Si l'utilisateur est déjà connecté, rediriger vers le tableau de bord
-if (isset($_SESSION['admin'])) {
-    header('Location: dashboard.php');
+// Désactiver la mise en cache pour les pages sensibles
+if (!headers_sent()) {
+    header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
+    header('Cache-Control: post-check=0, pre-check=0', false);
+    header('Pragma: no-cache');
+    header('X-Content-Type-Options: nosniff');
+    header('X-Frame-Options: DENY');
+    header('X-XSS-Protection: 1; mode=block');
+    header('Referrer-Policy: same-origin');
+    header('Permissions-Policy: geolocation=(), microphone=()');
+}
+
+// La session est déjà initialisée par config.php
+
+// Vérifier si l'utilisateur est déjà connecté
+if (isLoggedIn()) {
+    // Vérifier si la requête est AJAX
+    $is_ajax = !empty($_SERVER['HTTP_X_REQUESTED_WITH']) && 
+              strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';
+    
+    if ($is_ajax) {
+        header('Content-Type: application/json');
+        echo json_encode([
+            'success' => true,
+            'redirect' => 'dashboard.php',
+            'message' => 'Vous êtes déjà connecté. Redirection...'
+        ]);
+    } else {
+        redirect('dashboard.php');
+    }
     exit;
 }
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $username = trim($_POST['username'] ?? '');
-    $password = $_POST['password'] ?? '';
-    $is_ajax_request = !empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest';
+// Initialiser les variables
+$error_message = '';
+$success_message = '';
+$is_ajax_request = !empty($_SERVER['HTTP_X_REQUESTED_WITH']) && 
+                 strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';
 
-    // Cas spécial pour Cedric / 159632
-    if ($username === 'Cedric' && $password === '159632') {
-        $_SESSION['admin'] = [
-            'id' => 0, // ID fictif pour l'utilisateur en dur
-            'username' => 'Cedric',
-            'email' => 'cedric@local.dev' // Email fictif
-        ];
-        if ($is_ajax_request) {
-            echo json_encode(['success' => true, 'redirect_url' => 'dashboard.php']);
-        } else {
-            header('Location: dashboard.php');
-        }
-        exit;
-    }
-
-    // Vérification pour les autres utilisateurs via la base de données
-    if (!empty($username) && !empty($password)) {
-        try {
-            $stmt = $pdo->prepare("SELECT * FROM admins WHERE username = :username OR email = :username");
-            $stmt->bindParam(':username', $username);
-            $stmt->execute();
-            $admin = $stmt->fetch(PDO::FETCH_ASSOC);
-
-            if ($admin && password_verify($password, $admin['password'])) {
-                $_SESSION['admin'] = $admin;
-                if ($is_ajax_request) {
-                    echo json_encode(['success' => true, 'redirect_url' => 'dashboard.php']);
-                } else {
-                    header('Location: dashboard.php');
-                }
-                exit;
-            } else {
-                $error_message = 'Identifiants incorrects. Veuillez réessayer.';
-            }
-        } catch (PDOException $e) {
-            error_log('Erreur PDO: ' . $e->getMessage()); // Journalisation de l'erreur
-            $error_message = 'Erreur de base de données. Veuillez réessayer.';
-        }
-    } else {
-        $error_message = 'Veuillez remplir tous les champs.';
-    }
-    
-    // Si c'est une requête AJAX et qu'il y a une erreur (après toutes les tentatives de connexion)
-    if ($is_ajax_request && !empty($error_message)) {
-        echo json_encode(['success' => false, 'message' => $error_message]);
-        exit;
-    }
-    // Si ce n'est pas AJAX et qu'il y a une erreur, $error_message sera affiché par le HTML plus bas.
+// Récupérer les messages de session s'ils existent
+if (isset($_SESSION['error_message'])) {
+    $error_message = $_SESSION['error_message'];
+    unset($_SESSION['error_message']);
 }
+
+if (isset($_SESSION['success_message'])) {
+    $success_message = $_SESSION['success_message'];
+    unset($_SESSION['success_message']);
+}
+
+// Vérifier si la base de données est disponible
+try {
+    $pdo = getDatabaseConnection();
+} catch (Exception $e) {
+    $error_message = 'Erreur de connexion à la base de données. Veuillez réessayer plus tard.';
+    if (ENVIRONMENT === 'development') {
+        $error_message .= ' Détails : ' . $e->getMessage();
+    }
+    Logger::critical('Erreur de connexion à la base de données : ' . $e->getMessage());
+}
+
+// Traitement du formulaire de connexion
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Vérifier le jeton CSRF
+    if (!verifyCSRFToken('POST', 'login_form')) {
+        $error_message = 'Erreur de sécurité. Veuillez recharger la page et réessayer.';
+        
+        // Journaliser la tentative de CSRF
+        Logger::warning('Tentative de connexion avec jeton CSRF invalide ou manquant', [
+            'ip' => $_SERVER['REMOTE_ADDR'] ?? 'inconnue',
+            'user_agent' => $_SERVER['HTTP_USER_AGENT'] ?? 'inconnu',
+            'referer' => $_SERVER['HTTP_REFERER'] ?? 'inconnue'
+        ]);
+    } else {
+        $username = trim($_POST['username'] ?? '');
+        $password = $_POST['password'] ?? '';
+        $remember = isset($_POST['remember']);
+        $ip = $_SERVER['REMOTE_ADDR'] ?? 'inconnue';
+        
+        // Journalisation de la tentative de connexion
+        Logger::info('Tentative de connexion', [
+            'username' => $username,
+            'ip' => $ip,
+            'user_agent' => $_SERVER['HTTP_USER_AGENT'] ?? 'inconnu'
+        ]);
+
+        // Vérification des identifiants
+        if (empty($username) || empty($password)) {
+            $error_message = 'Veuillez saisir un nom d\'utilisateur et un mot de passe.';
+        } else {
+            try {
+                // Vérifier le nombre de tentatives de connexion échouées
+                $stmt = $pdo->prepare("SELECT COUNT(*) FROM login_attempts WHERE ip = ? AND created_at > datetime('now', '-15 minutes')");
+                $stmt->execute([$ip]);
+                $attempts = (int)$stmt->fetchColumn();
+                
+                if ($attempts >= 5) {
+                    $error_message = 'Trop de tentatives de connexion. Veuillez réessayer dans 15 minutes.';
+                    Logger::warning('Trop de tentatives de connexion', ['ip' => $ip]);
+                } else {
+                    // Vérifier les identifiants dans la base de données
+                    $stmt = $pdo->prepare("SELECT * FROM users WHERE username = ? AND is_active = 1");
+                    $stmt->execute([$username]);
+                    $user = $stmt->fetch(PDO::FETCH_ASSOC);
+                    
+                    if ($user && password_verify($password, $user['password'])) {
+                        // Réinitialiser le compteur de tentatives en cas de succès
+                        $stmt = $pdo->prepare("DELETE FROM login_attempts WHERE ip = ?");
+                        $stmt->execute([$ip]);
+                        
+                        // Mettre à jour la date de dernière connexion
+                        $stmt = $pdo->prepare("UPDATE users SET last_login = CURRENT_TIMESTAMP, login_attempts = 0 WHERE id = ?");
+                        $stmt->execute([$user['id']]);
+                        
+                        // Créer la session utilisateur
+                        $_SESSION['admin'] = [
+                            'id' => $user['id'],
+                            'username' => $user['username'],
+                            'email' => $user['email']
+                        ];
+                        
+                        // Ajouter des informations de sécurité à la session
+                        $_SESSION['user_agent'] = $_SERVER['HTTP_USER_AGENT'] ?? '';
+                        $_SESSION['ip_address'] = $ip;
+                        $_SESSION['last_activity'] = time();
+                        
+                        // Régénérer l'ID de session pour prévenir les attaques de fixation de session
+                        session_regenerate_id(true);
+                        
+                        // Journaliser la connexion réussie
+                        Logger::info('Connexion réussie', [
+                            'user_id' => $user['id'],
+                            'username' => $user['username']
+                        ]);
+                        
+                        // Gestion du "Se souvenir de moi"
+                        if ($remember) {
+                            // Générer un jeton unique
+                            $token = bin2hex(random_bytes(32));
+                            $expires = time() + (86400 * 30); // 30 jours
+                            
+                            // Stocker le jeton dans la base de données
+                            $stmt = $pdo->prepare("UPDATE users SET remember_token = ?, remember_token_expires = ? WHERE id = ?");
+                            $stmt->execute([
+                                password_hash($token, PASSWORD_DEFAULT),
+                                date('Y-m-d H:i:s', $expires),
+                                $user['id']
+                            ]);
+                            
+                            // Définir le cookie
+                            setcookie(
+                                'remember_token',
+                                $token,
+                                [
+                                    'expires' => $expires,
+                                    'path' => '/admin',
+                                    'domain' => $_SERVER['HTTP_HOST'],
+                                    'secure' => true,
+                                    'httponly' => true,
+                                    'samesite' => 'Strict'
+                                ]
+                            );
+                        }
+                        
+                        // Rediriger vers le tableau de bord
+                        $redirect_to = $_SESSION['redirect_after_login'] ?? 'dashboard.php';
+                        unset($_SESSION['redirect_after_login']);
+                        
+                        // Répondre différemment pour les requêtes AJAX
+                        if ($is_ajax_request) {
+                            header('Content-Type: application/json');
+                            echo json_encode([
+                                'success' => true,
+                                'redirect' => $redirect_to,
+                                'message' => 'Connexion réussie. Redirection...'
+                            ]);
+                            exit;
+                        }
+                        
+                        // Redirection normale
+                        $_SESSION['success_message'] = 'Connexion réussie. Bienvenue ' . htmlspecialchars($user['username']) . '!';
+                        redirect($redirect_to);
+                        exit;
+                    } else {
+                        // Échec de l'authentification
+                        $error_message = 'Identifiants incorrects. Veuillez réessayer.';
+                        
+                        // Enregistrer la tentative échouée
+                        $stmt = $pdo->prepare("INSERT INTO login_attempts (username, ip, user_agent) VALUES (?, ?, ?)");
+                        $stmt->execute([
+                            $username,
+                            $ip,
+                            $_SERVER['HTTP_USER_AGENT'] ?? 'inconnu'
+                        ]);
+                        
+                        // Calculer le nombre de tentatives restantes
+                        $remaining_attempts = max(0, 5 - ($attempts + 1));
+                        if ($remaining_attempts > 0) {
+                            $error_message .= " ($remaining_attempts tentatives restantes)";
+                        } else {
+                            $error_message = 'Trop de tentatives. Veuillez réessayer dans 15 minutes.';
+                        }
+                        
+                        Logger::warning('Échec de connexion', [
+                            'username' => $username,
+                            'ip' => $ip,
+                            'attempts' => $attempts + 1
+                        ]);
+                    }
+                }
+            } catch (PDOException $e) {
+                $error_message = 'Une erreur est survenue lors de la connexion. Veuillez réessayer.';
+                Logger::error('Erreur lors de l\'authentification : ' . $e->getMessage(), [
+                    'username' => $username,
+                    'ip' => $ip,
+                    'trace' => $e->getTraceAsString()
+                ]);
+            }
+        }
+    }
+}
+
+// Générer un nouveau jeton CSRF pour le formulaire
+$csrf_field = csrfField('login_form');
 ?>
 <!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Connexion Administrateur - Franchini</title>
-    <link rel="stylesheet" href="../assets/css/style.css">
-    <link rel="stylesheet" href="../assets/css/footer-style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <title>Connexion - Administration</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        /* Styles repris de connexion-prive.html et adaptés */
         body {
-            font-family: 'Roboto', 'Arial', sans-serif;
-            background-color: #f4f7f6;
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-            margin: 0;
+            background-color: #f8f9fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
-        .main-header, .footer-container {
-            flex-shrink: 0; /* Empêche header/footer de rétrécir */
+        .login-container {
+            max-width: 400px;
+            margin: 100px auto;
+            padding: 30px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
         }
-        main.login-main-content {
-            flex-grow: 1; /* Permet à main de prendre l'espace restant */
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 2rem 1rem; /* Ajout de padding */
-            background-color: #fff; /* Fond blanc pour la zone de contenu principal */
-        }
-        .login-box {
-            background-color: #fff; /* Le fond est déjà blanc, mais on s'assure qu'il est sur un fond de page blanc */
-            border: 1px solid #e0e0e0; /* Bordure légère comme sur l'image */
-            border-radius: 8px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.08); /* Ombre portée plus subtile */
-            padding: 2rem;
-            width: 100%;
-            max-width: 360px; /* Réduction de la largeur max */
-        }
-        .login-box-header {
+        .logo {
             text-align: center;
-            margin-bottom: 1.5rem; /* Réduit l'espace pour compacter */
+            margin-bottom: 30px;
         }
-        .login-box-header .icon-lock { /* Style pour l'icône cadenas */
-            font-size: 2.5rem; /* Icône un peu plus petite */
-            color: #6abd7a; /* Vert Franchini (ajusté pour correspondre à l'image) */
-            margin-bottom: 0.8rem;
-            display: block;
+        .logo img {
+            max-height: 80px;
+            margin-bottom: 15px;
         }
-        .login-box-header h1 {
-            color: #333;
-            font-size: 1.5rem; /* Titre un peu plus petit */
-            font-weight: 600;
-            margin: 0;
+        .form-control:focus {
+            border-color: #0d6efd;
+            box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
         }
-        .error-message-box {
-            background-color: #ffebee;
-            color: #c62828;
-            padding: 0.8rem;
-            border-radius: 4px;
-            margin-bottom: 1rem;
-            display: flex;
-            align-items: center;
-            font-size: 0.9rem;
-        }
-        .error-message-box i {
-            margin-right: 0.5rem;
-            font-size: 1.1rem;
-        }
-        .form-group {
-            margin-bottom: 1rem; /* Espacement réduit */
-        }
-        .form-group label {
-            display: block;
-            margin-bottom: 0.4rem;
-            color: #555;
-            font-weight: 500;
-            font-size: 0.9rem;
-        }
-        .form-group label i {
-            margin-right: 0.5rem;
-            color: #6abd7a;
-        }
-        .form-group input[type="text"],
-        .form-group input[type="password"] {
-            width: 100%;
-            padding: 0.7rem;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            font-size: 0.95rem;
-            box-sizing: border-box; 
-            transition: border-color 0.3s;
-        }
-        .form-group input:focus {
-            border-color: #6abd7a;
-            outline: none;
-            box-shadow: 0 0 0 0.2rem rgba(106, 189, 122, 0.25);
-        }
-        .btn-submit-login {
-            background-color: #6abd7a; /* Vert Franchini */
-            color: white;
+        .btn-primary {
+            background-color: #0d6efd;
             border: none;
-            border-radius: 4px;
-            padding: 0.7rem 1.5rem;
-            font-size: 1rem;
+            padding: 10px 20px;
             font-weight: 500;
-            cursor: pointer;
-            width: 100%;
-            transition: background-color 0.3s;
-            display: flex;
-            justify-content: center;
-            align-items: center;
         }
-        .btn-submit-login i {
-            margin-right: 0.5rem;
+        .btn-primary:hover {
+            background-color: #0b5ed7;
         }
-        .btn-submit-login:hover {
-            background-color: #58a066; /* Vert Franchini plus foncé */
-        }
-        .login-links {
-            text-align: center;
-            margin-top: 1rem;
-        }
-        .login-links a {
-            color: #555;
-            font-size: 0.85rem;
-            text-decoration: none;
-            display: block; /* Pour qu'ils soient l'un au-dessus de l'autre */
-        }
-        .login-links a:hover {
-            text-decoration: underline;
-        }
-        .login-links a.forgot-password {
-            margin-bottom: 0.5rem;
-        }
-        .login-links a i {
-            margin-right: 0.3rem;
+        .alert {
+            border-radius: 8px;
         }
     </style>
 </head>
 <body>
-    <header class="main-header">
-        <div class="container">
+    <div class="container">
+        <div class="login-container">
             <div class="logo">
-                <a href="../index.html" class="logo-link">
-                    <img src="../assets/images/logo/FRANCHINI logo.svg" alt="FRANCHINI Logo" class="logo-image">
-                    <span class="logo-text">FRANCHINI</span>
-                </a>
-                <div class="header-social">
-                    <a href="https://www.facebook.com/franchinimarches" target="_blank" class="social-icon"><i class="fab fa-facebook"></i></a>
-                    <a href="https://www.instagram.com/franchini_deutzfahr" target="_blank" class="social-icon"><i class="fab fa-instagram"></i></a>
+                <h2>Connexion</h2>
+                <p class="text-muted">Accès à l'administration</p>
+            </div>
+            
+            <?php if ($error_message): ?>
+                <div class="alert alert-danger">
+                    <?php echo htmlspecialchars($error_message); ?>
                 </div>
-            </div>
-            <nav class="main-nav">
-                <ul>
-                    <li><a href="../pages/concession.html">La concession</a></li>
-                    <li class="dropdown">
-                        <a href="#">Matériel neuf</a>
-                        <div class="dropdown-content">
-                            <a href="../pages/materiel.html">Matériel neuf</a>
-                            <a href="../pages/materiel-disponible.html">Matériel neuf disponible</a>
-                        </div>
-                    </li>
-                    <li><a href="../pages/location.html">Location</a></li>
-                    <li><a href="../pages/occasion.html">Occasion</a></li>
-                    <li><a href="../pages/magasin.html">Magasin</a></li>
-                    <li><a href="../pages/contact.html">Contact</a></li>
-                    <li><a href="tel:0475474037" class="phone-number"><i class="fas fa-phone"></i> 04 75 47 40 37</a></li>
-                </ul>
-            </nav>
-        </div>
-    </header>
-
-    <main class="login-main-content">
-        <div class="login-box">
-            <div class="login-box-header">
-                <i class="fas fa-lock icon-lock"></i>
-                <h1>Connexion Privée</h1>
-            </div>
-
-            <?php if (!empty($error_message)): ?>
-            <div class="error-message-box">
-                <i class="fas fa-exclamation-circle"></i>
-                <span><?php echo htmlspecialchars($error_message); ?></span>
-            </div>
             <?php endif; ?>
-
-            <form method="POST" action="login.php" class="login-form">
-                <div class="form-group">
-                    <label for="username">
-                        <i class="fas fa-user"></i>
-                        Nom d'utilisateur
-                    </label>
-                    <input type="text" id="username" name="username" required value="<?php echo isset($_POST['username']) ? htmlspecialchars($_POST['username']) : ''; ?>">
+            
+            <?php if ($success_message): ?>
+                <div class="alert alert-success">
+                    <?php echo htmlspecialchars($success_message); ?>
                 </div>
-                <div class="form-group">
-                    <label for="password">
-                        <i class="fas fa-key"></i>
-                        Mot de passe
-                    </label>
-                    <input type="password" id="password" name="password" required>
+            <?php endif; ?>
+            
+            <form id="loginForm" method="POST" action="login.php" novalidate>
+                <?php echo $csrf_field; ?>
+                
+                <div class="mb-3">
+                    <label for="username" class="form-label">Nom d'utilisateur</label>
+                    <input type="text" class="form-control" id="username" name="username" 
+                           value="<?php echo isset($username) ? htmlspecialchars($username) : ''; ?>" required>
+                    <div class="invalid-feedback">Veuillez saisir votre nom d'utilisateur.</div>
                 </div>
-                <button type="submit" class="btn-submit-login">
-                    <i class="fas fa-sign-in-alt"></i>
-                    Se connecter
-                </button>
+                
+                <div class="mb-3">
+                    <label for="password" class="form-label">Mot de passe</label>
+                    <input type="password" class="form-control" id="password" name="password" required>
+                    <div class="invalid-feedback">Veuillez saisir votre mot de passe.</div>
+                </div>
+                
+                <div class="mb-3 form-check">
+                    <input type="checkbox" class="form-check-input" id="remember" name="remember">
+                    <label class="form-check-label" for="remember">Se souvenir de moi</label>
+                </div>
+                
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-primary">
+                        <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+                        Se connecter
+                    </button>
+                </div>
+                
+                <div class="text-center mt-3">
+                    <a href="forgot-password.php" class="text-decoration-none">Mot de passe oublié ?</a>
+                </div>
             </form>
-            <div class="login-links">
-                <a href="#" class="forgot-password">Mot de passe oublié ?</a>
-                <a href="../index.html"><i class="fas fa-arrow-left"></i> Retour au site</a>
-            </div>
         </div>
-    </main>
+    </div>
 
-    <footer class="footer-container">
-        <div class="footer-content">
-            <div class="footer-section about">
-                <a href="../index.html"><img src="../assets/images/logo/FRANCHINI logo.svg" alt="Logo Franchini Footer" class="footer-logo"></a>
-                <p class="footer-company-name">FRANCHINI</p>
-                <p class="footer-address">111 Av des Monts du Matin<br>26300 Marches</p>
-                <p class="footer-phone"><i class="fas fa-phone"></i> <a href="tel:0475474037">04 75 47 40 37</a></p>
-            </div>
-            <div class="footer-section links">
-                <h3>Navigation</h3>
-                <ul>
-                    <li><a href="../index.html">Accueil</a></li>
-                    <li><a href="../pages/concession.html">La concession</a></li>
-                    <li><a href="../pages/materiel.html">Matériel neuf</a></li>
-                    <li><a href="../pages/location.html">Location</a></li>
-                    <li><a href="../pages/occasion.html">Occasion</a></li>
-                    <li><a href="../pages/magasin.html">Magasin</a></li>
-                    <li><a href="../pages/contact.html">Contact</a></li>
-                    <li><a href="../pages/mentions-legales.html">Mentions Légales</a></li>
-                </ul>
-            </div>
-            <div class="footer-section contact-info">
-                <h3>Horaires d'ouverture</h3>
-                <p><strong>Magasin :</strong> Lundi au Vendredi<br>8h-12h et 14h-18h</p>
-                <p>Samedi : 8h-12h (fermé l'après-midi)</p>
-                <p><strong>Atelier :</strong> Lundi au Vendredi<br>8h-12h et 14h-18h</p>
-                <div class="footer-social">
-                    <a href="https://www.facebook.com/franchinimarches" target="_blank"><i class="fab fa-facebook-f"></i></a>
-                    <a href="https://www.instagram.com/franchini_deutzfahr" target="_blank"><i class="fab fa-instagram"></i></a>
-                </div>
-            </div>
-        </div>
-        <div class="footer-bottom">
-            <p>&copy; <span id="currentYear"></span> Franchini. Tous droits réservés. Site réalisé par <a href="https://www.votre-agence-web.com" target="_blank">VotreAgenceWeb</a>. <a href="../pages/connexion-prive.html" class="footer-intranet"><i class="fas fa-lock"></i> Connexion privée</a></p>
-        </div>
-    </footer>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        document.getElementById('currentYear').textContent = new Date().getFullYear();
+        // Validation du formulaire côté client
+        (function () {
+            'use strict';
+            
+            // Récupérer le formulaire
+            const form = document.getElementById('loginForm');
+            const submitBtn = form.querySelector('button[type="submit"]');
+            const spinner = submitBtn.querySelector('.spinner-border');
+            
+            // Désactiver la validation HTML5 par défaut
+            form.setAttribute('novalidate', true);
+            
+            // Écouter la soumission du formulaire
+            form.addEventListener('submit', function (event) {
+                // Empêcher la soumission par défaut
+                event.preventDefault();
+                event.stopPropagation();
+                
+                // Réinitialiser les états de validation
+                form.classList.add('was-validated');
+                
+                // Vérifier la validité du formulaire
+                if (form.checkValidity() === false) {
+                    return;
+                }
+                
+                // Désactiver le bouton et afficher le spinner
+                submitBtn.disabled = true;
+                spinner.classList.remove('d-none');
+                
+                // Si c'est une requête AJAX
+                const xhr = new XMLHttpRequest();
+                xhr.open('POST', form.action, true);
+                xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+                xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+                
+                // Préparer les données du formulaire
+                const formData = new FormData(form);
+                const urlEncodedData = new URLSearchParams(formData).toString();
+                
+                xhr.onload = function() {
+                    try {
+                        const response = JSON.parse(xhr.responseText);
+                        
+                        if (xhr.status >= 200 && xhr.status < 300) {
+                            if (response.redirect) {
+                                window.location.href = response.redirect;
+                            } else {
+                                window.location.reload();
+                            }
+                        } else {
+                            // Afficher le message d'erreur
+                            const alertDiv = document.createElement('div');
+                            alertDiv.className = 'alert alert-danger';
+                            alertDiv.textContent = response.message || 'Une erreur est survenue. Veuillez réessayer.';
+                            
+                            // Insérer avant le formulaire
+                            form.parentNode.insertBefore(alertDiv, form);
+                            
+                            // Faire défiler jusqu'au message d'erreur
+                            alertDiv.scrollIntoView({ behavior: 'smooth' });
+                        }
+                    } catch (e) {
+                        // En cas d'erreur de parsing JSON, recharger la page
+                        window.location.reload();
+                    } finally {
+                        // Réactiver le bouton et masquer le spinner
+                        submitBtn.disabled = false;
+                        spinner.classList.add('d-none');
+                    }
+                };
+                
+                xhr.onerror = function() {
+                    // Réactiver le bouton et masquer le spinner en cas d'erreur
+                    submitBtn.disabled = false;
+                    spinner.classList.add('d-none');
+                    
+                    // Afficher un message d'erreur générique
+                    const alertDiv = document.createElement('div');
+                    alertDiv.className = 'alert alert-danger';
+                    alertDiv.textContent = 'Erreur de connexion. Veuillez vérifier votre connexion Internet et réessayer.';
+                    
+                    // Insérer avant le formulaire
+                    form.parentNode.insertBefore(alertDiv, form);
+                };
+                
+                // Envoyer la requête
+                xhr.send(urlEncodedData);
+            }, false);
+        })();
     </script>
 </body>
 </html>

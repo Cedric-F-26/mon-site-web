@@ -1,29 +1,35 @@
 <?php
-// Fichier d'initialisation de la base de données
+// Fichier d'initialisation de la base de données SQLite
 
 // Inclure le fichier de configuration
-require_once 'config.php';
+require_once __DIR__ . '/config.php';
 
-// Désactiver l'affichage des erreurs en production
+// Activer l'affichage des erreurs pour le débogage
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
+// Vérifier si le fichier de base de données existe et est accessible
+if (!file_exists(DB_PATH)) {
+    touch(DB_PATH);
+    chmod(DB_PATH, 0666);
+    echo "Fichier de base de données créé avec succès.<br>";
+}
+
 try {
     // Vérifier si la table des actualités existe
-    $tableExists = $pdo->query("SHOW TABLES LIKE 'news'")->rowCount() > 0;
+    $tableExists = $pdo->query("SELECT name FROM sqlite_master WHERE type='table' AND name='news'")->rowCount() > 0;
     
     if (!$tableExists) {
         // Créer la table des actualités si elle n'existe pas
-        $pdo->exec("CREATE TABLE IF NOT EXISTS `news` (
-            `id` int(11) NOT NULL AUTO_INCREMENT,
-            `title` varchar(255) NOT NULL,
-            `content` text NOT NULL,
-            `date` date NOT NULL,
-            `image_url` varchar(255) NOT NULL,
-            `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-            PRIMARY KEY (`id`)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
+        $pdo->exec("CREATE TABLE IF NOT EXISTS news (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            title TEXT NOT NULL,
+            content TEXT NOT NULL,
+            date DATE NOT NULL,
+            image_url TEXT NOT NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )");
         
         echo "Table 'news' créée avec succès.<br>";
     } else {
@@ -31,53 +37,65 @@ try {
     }
     
     // Vérifier si la table des promotions existe
-    $tableExists = $pdo->query("SHOW TABLES LIKE 'promotions'")->rowCount() > 0;
+    $tableExists = $pdo->query("SELECT name FROM sqlite_master WHERE type='table' AND name='promotions'")->rowCount() > 0;
     
     if (!$tableExists) {
         // Créer la table des promotions si elle n'existe pas
-        $pdo->exec("CREATE TABLE IF NOT EXISTS `promotions` (
-            `id` int(11) NOT NULL AUTO_INCREMENT,
-            `title` varchar(255) NOT NULL,
-            `description` text NOT NULL,
-            `start_date` date NOT NULL,
-            `end_date` date NOT NULL,
-            `image_url` varchar(255) NOT NULL,
-            `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-            PRIMARY KEY (`id`)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
+        $pdo->exec("CREATE TABLE IF NOT EXISTS promotions (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            title TEXT NOT NULL,
+            description TEXT NOT NULL,
+            start_date DATE NOT NULL,
+            end_date DATE NOT NULL,
+            image_url TEXT NOT NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )");
         
         echo "Table 'promotions' créée avec succès.<br>";
     } else {
         echo "La table 'promotions' existe déjà.<br>";
     }
     
+    // Vérifier si la table des utilisateurs existe
+    $tableExists = $pdo->query("SELECT name FROM sqlite_master WHERE type='table' AND name='users'")->rowCount() > 0;
+    
+    if (!$tableExists) {
+        // Créer la table des utilisateurs si elle n'existe pas
+        $pdo->exec("CREATE TABLE IF NOT EXISTS users (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            username TEXT NOT NULL UNIQUE,
+            password TEXT NOT NULL,
+            email TEXT NOT NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )");
+        
+        // Créer un utilisateur admin par défaut
+        $password_hash = password_hash('admin123', PASSWORD_DEFAULT);
+        $pdo->exec("INSERT INTO users (username, password, email) VALUES ('admin', '$password_hash', 'admin@example.com')");
+        
+        echo "Table 'users' créée avec succès et utilisateur admin ajouté.<br>";
+    } else {
+        echo "La table 'users' existe déjà.<br>";
+    }
+    
     // Vérifier si la table des administrateurs existe
-    $tableExists = $pdo->query("SHOW TABLES LIKE 'admins'")->rowCount() > 0;
+    $tableExists = $pdo->query("SELECT name FROM sqlite_master WHERE type='table' AND name='admins'")->rowCount() > 0;
     
     if (!$tableExists) {
         // Créer la table des administrateurs si elle n'existe pas
-        $pdo->exec("CREATE TABLE IF NOT EXISTS `admins` (
-            `id` int(11) NOT NULL AUTO_INCREMENT,
-            `username` varchar(50) NOT NULL,
-            `password` varchar(255) NOT NULL,
-            `email` varchar(100) NOT NULL,
-            `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-            PRIMARY KEY (`id`),
-            UNIQUE KEY `username` (`username`),
-            UNIQUE KEY `email` (`email`)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
+        $pdo->exec("CREATE TABLE IF NOT EXISTS admins (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            username TEXT NOT NULL UNIQUE,
+            password TEXT NOT NULL,
+            email TEXT NOT NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )");
         
-        // Créer un administrateur par défaut (mot de passe: admin123)
-        $username = 'admin';
-        $password = password_hash('admin123', PASSWORD_DEFAULT);
-        $email = 'admin@example.com';
+        // Ajouter un administrateur par défaut (mot de passe: admin123)
+        $password_hash = password_hash('admin123', PASSWORD_DEFAULT);
+        $pdo->exec("INSERT INTO admins (username, password, email) VALUES ('admin', '$password_hash', 'admin@example.com')");
         
-        $stmt = $pdo->prepare("INSERT INTO `admins` (username, password, email) VALUES (?, ?, ?)");
-        $stmt->execute([$username, $password, $email]);
-        
-        echo "Table 'admins' créée avec succès.<br>";
-        echo "<strong>Compte administrateur créé :</strong><br>";
-        echo "Nom d'utilisateur: admin<br>";
+        echo "Table 'admins' créée avec succès et administrateur ajouté.<br>";
         echo "Mot de passe: admin123<br>";
         echo "<strong>IMPORTANT :</strong> Changez ce mot de passe immédiatement après la première connexion.<br>";
     } else {

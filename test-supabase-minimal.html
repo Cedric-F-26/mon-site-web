@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Minimal Supabase</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        #status { margin: 20px 0; padding: 10px; border-radius: 4px; }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+    </style>
+</head>
+<body>
+    <h1>Test Minimal Supabase</h1>
+    <div id="status">Chargement du SDK Supabase...</div>
+    <div id="logs"></div>
+
+    <!-- Inclure le SDK Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <script>
+        function log(message, type = 'info') {
+            const logs = document.getElementById('logs');
+            const entry = document.createElement('div');
+            entry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            if (type === 'error') entry.style.color = 'red';
+            if (type === 'success') entry.style.color = 'green';
+            logs.appendChild(entry);
+        }
+
+        // Vérifier si Supabase est chargé
+        function checkSupabase() {
+            const status = document.getElementById('status');
+            
+            if (typeof supabase === 'undefined') {
+                status.textContent = 'Erreur: Supabase n\'est pas chargé';
+                status.className = 'error';
+                log('Supabase n\'est pas disponible', 'error');
+                return false;
+            }
+            
+            try {
+                // Configuration de base
+                const SUPABASE_URL = 'https://svvupcjjqyyehxbxlkro.supabase.co';
+                const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN2dnVwY2pqcXl5ZWh4Ynhsa3JvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk0Njg3NjcsImV4cCI6MjA2NTA0NDc2N30.wSK-HT0_UCNIVsfrcHQ1OBOlgdbKR4uMICDtbwg6ivY';
+                
+                // Créer le client
+                const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+                
+                // Tester la connexion
+                testConnection(supabaseClient);
+                return true;
+                
+            } catch (error) {
+                status.textContent = 'Erreur lors de l\'initialisation: ' + error.message;
+                status.className = 'error';
+                log('Erreur: ' + error.message, 'error');
+                return false;
+            }
+        }
+
+        // Tester la connexion à Supabase
+        async function testConnection(client) {
+            const status = document.getElementById('status');
+            
+            try {
+                log('Tentative de connexion à Supabase...');
+                
+                // Tester une requête simple
+                const { data, error } = await client
+                    .from('users')
+                    .select('*')
+                    .limit(1);
+                
+                if (error) throw error;
+                
+                status.textContent = '✅ Connexion à Supabase réussie !';
+                status.className = 'success';
+                log('Connexion réussie ! Données reçues : ' + JSON.stringify(data));
+                
+            } catch (error) {
+                status.textContent = '❌ Erreur de connexion : ' + error.message;
+                status.className = 'error';
+                log('Erreur: ' + error.message, 'error');
+            }
+        }
+
+        // Démarrer le test lorsque la page est chargée
+        window.onload = function() {
+            // Essayer de charger Supabase
+            if (typeof supabase === 'undefined') {
+                // Si Supabase n'est pas chargé, essayer de le charger dynamiquement
+                log('Chargement du SDK Supabase...');
+                const script = document.createElement('script');
+                script.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
+                script.onload = function() {
+                    log('SDK Supabase chargé avec succès', 'success');
+                    checkSupabase();
+                };
+                script.onerror = function() {
+                    log('Erreur lors du chargement du SDK Supabase', 'error');
+                };
+                document.head.appendChild(script);
+            } else {
+                // Si Supabase est déjà chargé
+                checkSupabase();
+            }
+        };
+    </script>
+</body>
+</html>

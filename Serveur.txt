@@ -1,0 +1,3 @@
+PS C:\Users\cedri> cd "C:\Users\cedri\Documents\GitHub\mon-site-web"
+PS C:\Users\cedri\Documents\GitHub\mon-site-web> php -S localhost:8000^C
+PS C:\Users\cedri\Documents\GitHub\mon-site-web> php -S localhost:8080

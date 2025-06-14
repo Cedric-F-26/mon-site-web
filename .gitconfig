@@ -1,0 +1,10 @@
+[user]
+	name = Cedric-F-26
+	email = cedric.franchini@gmail.com
+[filter "lfs"]
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true
+[safe]
+	directory = G:/Mon site web/GitHub/mon-site-web

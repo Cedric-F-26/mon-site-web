@@ -1,2 +1,81 @@
-﻿# Ignorer les fichiers volumineux
-magasin/KONNECT_23 - Printemps 2025.pdf
+# Fichiers système
+.DS_Store
+Thumbs.db
+
+# Fichiers d'environnement
+.env
+*.env
+
+# Fichiers PHP inutiles (migration vers Supabase)
+*.php
+!index.php
+!pages/*.php
+
+# Dossiers de dépendances
+node_modules/
+vendor/
+
+# Fichiers de sauvegarde
+*.bak
+*.backup
+*.swp
+
+# Dossiers d'administration (ancien système PHP)
+admin/
+config/
+
+# Fichiers de configuration sensibles
+config/credentials.php
+config.local.php
+*~
+
+# Fichiers de logs
+*.log
+!logs/.gitkeep
+!logs/README.md
+
+# Fichiers de cache
+.cache/
+.temp/
+.tmp/
+
+# Fichiers d'IDE
+.idea/
+.vscode/
+*.sublime-workspace
+*.sublime-project
+workspace.code-workspace
+
+# Fichiers système Windows
+desktop.ini
+
+# Fichiers de base de données
+*.sql
+*.sqlite
+
+# Fichiers de déploiement
+.firebase/
+.firebaserc
+
+# Fichiers de débogage
+.phpunit.result.cache
+
+# Fichiers de configuration locaux
+.phpunit.*.cache
+
+# Fichiers de session
+sess_*
+
+# Fichiers temporaires
+tmp/
+temp/
+
+# Fichiers de téléchargement
+uploads/
+
+# Fichiers de sauvegarde
+database_backups/
+backups/
+
+# Fichiers spécifiques au projet
+phpmyadmin.url

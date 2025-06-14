@@ -10,7 +10,7 @@ if (!isset($_SESSION['admin'])) {
 }
 
 // Inclure le fichier de configuration de la base de données
-require_once 'config.php';
+require_once __DIR__ . '/config.php';
 
 // Répondre en JSON
 header('Content-Type: application/json');
