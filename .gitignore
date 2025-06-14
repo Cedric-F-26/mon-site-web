@@ -1,38 +1,23 @@
 # Fichiers système
 .DS_Store
 Thumbs.db
+desktop.ini
 
 # Fichiers d'environnement
 .env
 *.env
 
-# Fichiers PHP inutiles (migration vers Supabase)
-*.php
-!index.php
-!pages/*.php
-
 # Dossiers de dépendances
 node_modules/
-vendor/
 
 # Fichiers de sauvegarde
 *.bak
 *.backup
 *.swp
-
-# Dossiers d'administration (ancien système PHP)
-admin/
-config/
-
-# Fichiers de configuration sensibles
-config/credentials.php
-config.local.php
 *~
 
 # Fichiers de logs
 *.log
-!logs/.gitkeep
-!logs/README.md
 
 # Fichiers de cache
 .cache/
@@ -44,10 +29,15 @@ config.local.php
 .vscode/
 *.sublime-workspace
 *.sublime-project
-workspace.code-workspace
 
-# Fichiers système Windows
-desktop.ini
+# Fichiers système
+dist/
+build/
+
+# Fichiers de déploiement
+.firebase/
+.firebaserc
+firebase.json
 
 # Fichiers de base de données
 *.sql

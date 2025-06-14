@@ -451,6 +451,148 @@
             color: #4CAF50;
             margin-bottom: 1rem;
         }
+        
+        /* Styles pour le carrousel d'accueil */
+        .carousel-items-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .carousel-item {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            overflow: hidden;
+            background: white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .carousel-item-preview {
+            position: relative;
+            padding-top: 56.25%; /* 16:9 Aspect Ratio */
+            background: #f5f5f5;
+            overflow: hidden;
+        }
+        
+        .carousel-item-preview img,
+        .carousel-item-preview iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .carousel-item-details {
+            padding: 15px;
+        }
+        
+        .carousel-item-details h4 {
+            margin: 0 0 10px 0;
+            color: #333;
+        }
+        
+        .carousel-item-details p {
+            margin: 0 0 10px 0;
+            color: #666;
+            font-size: 0.9em;
+        }
+        
+        .carousel-item-actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+            padding-top: 10px;
+            border-top: 1px solid #eee;
+        }
+        
+        .carousel-item-link {
+            color: #4CAF50;
+            text-decoration: none;
+            font-size: 0.9em;
+        }
+        
+        .carousel-item-link:hover {
+            text-decoration: underline;
+        }
+        
+        .carousel-item-buttons button {
+            background: none;
+            border: none;
+            color: #666;
+            cursor: pointer;
+            margin-left: 10px;
+            font-size: 1em;
+        }
+        
+        .carousel-item-buttons button:hover {
+            color: #e74c3c;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+        
+        textarea.form-control {
+            min-height: 100px;
+            resize: vertical;
+        }
+        
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 4px;
+            background-color: #4CAF50;
+            color: white;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .btn i {
+            margin-right: 0.5rem;
+        }
+        
+        .btn:hover {
+            background-color: #45a049;
+        }
+        
+        .btn-danger {
+            background-color: #e74c3c;
+        }
+        
+        .btn-danger:hover {
+            background-color: #c0392b;
+        }
+        
+        .preview-container {
+            margin-top: 1rem;
+        }
+        
+        .preview-container img {
+            max-width: 100%;
+            max-height: 200px;
+            border-radius: 4px;
+            margin-top: 0.5rem;
+        }
 
         .dropzone p {
             margin: 0;
@@ -561,9 +703,12 @@
 
     <main class="container">
             <div class="tabs">
-                <button class="tab-btn active" data-tab="utilisateurs">
-                    <i class="fas fa-users"></i> Utilisateurs
+                <button class="tab-btn active" data-tab="accueil">
+                    <i class="fas fa-home"></i> Accueil
                 </button>
+                <a href="https://supabase.com/dashboard/project/svvupcjjqyyehxbxlkro/auth/users?f={\"search_query\":\"1b13f9b9-a4ab-47da-b29b-9839b126f69b\"}" target="_blank" class="tab-btn" style="text-decoration: none; color: inherit;">
+                    <i class="fas fa-users"></i> Gérer les utilisateurs (Supabase)
+                </a>
                 <button class="tab-btn" data-tab="actualites">
                     <i class="fas fa-newspaper"></i> Actualités
                 </button>
@@ -578,35 +723,66 @@
                 </button>
             </div>
 
-            <div id="utilisateurs" class="tab-content active">
-                <h2>Gestion des Utilisateurs</h2>
+            <div id="accueil" class="tab-content active">
+                <h2>Personnalisation du bandeau d'accueil</h2>
                 <div class="admin-card">
-                    <h3>Ajouter/Modifier un Utilisateur</h3>
-                    <form id="utilisateur-form">
-                        <input type="hidden" id="utilisateur-id">
-                        <label for="utilisateur-nom">Nom d'utilisateur:</label>
-                        <input type="text" id="utilisateur-nom" required><br>
-                        <label for="utilisateur-mdp">Mot de passe:</label>
-                        <input type="password" id="utilisateur-mdp" required><br>
-                        <button type="button" id="add-utilisateur-btn" class="btn-primary"><i class="fas fa-plus"></i> Ajouter l'utilisateur</button>
-                    </form>
-                    <p><small><strong>Avertissement de sécurité :</strong> Les mots de passe sont stockés de manière non sécurisée pour cette démonstration. Ne pas utiliser cette méthode en production.</small></p>
+                    <h3>Gestion du carrousel</h3>
+                    <div class="form-group">
+                        <label for="media-type">Type de média :</label>
+                        <select id="media-type" class="form-control">
+                            <option value="image">Image</option>
+                            <option value="youtube">Vidéo YouTube</option>
+                        </select>
+                    </div>
+                    
+                    <div id="image-upload-section">
+                        <div class="form-group">
+                            <label for="media-upload">Téléverser une image :</label>
+                            <div class="dropzone" id="media-dropzone">
+                                <p>Glissez-déposez une image ici ou cliquez pour sélectionner</p>
+                                <input type="file" id="media-upload" accept="image/*" style="display: none;">
+                            </div>
+                            <div id="media-preview" class="preview-container"></div>
+                        </div>
+                    </div>
+                    
+                    <div id="youtube-section" style="display: none;">
+                        <div class="form-group">
+                            <label for="youtube-url">URL de la vidéo YouTube :</label>
+                            <input type="text" id="youtube-url" class="form-control" placeholder="https://www.youtube.com/watch?v=...">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="media-title">Titre (optionnel) :</label>
+                        <input type="text" id="media-title" class="form-control" placeholder="Titre du média">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="media-description">Description (optionnel) :</label>
+                        <textarea id="media-description" class="form-control" rows="3" placeholder="Description du média"></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="media-link">Lien (optionnel) :</label>
+                        <input type="url" id="media-link" class="form-control" placeholder="https://exemple.com">
+                        <label for="link-text">Texte du lien :</label>
+                        <input type="text" id="link-text" class="form-control" placeholder="Voir plus">
+                    </div>
+                    
+                    <button type="button" id="add-media-btn" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> Ajouter au carrousel
+                    </button>
                 </div>
+                
                 <div class="admin-card">
-                    <h3>Liste des Utilisateurs</h3>
-                    <table class="admin-table">
-                        <thead>
-                            <tr>
-                                <th>Nom d'utilisateur</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="utilisateurs-table-body">
-                            <!-- Les utilisateurs seront listés ici -->
-                        </tbody>
-                    </table>
+                    <h3>Éléments du carrousel</h3>
+                    <div id="carousel-items" class="carousel-items-container">
+                        <!-- Les éléments du carrousel seront ajoutés ici dynamiquement -->
+                    </div>
                 </div>
             </div>
+            
             <div id="actualites" class="tab-content">
                 <h2>Gestion des Actualités</h2>
                 <div class="admin-card">
@@ -757,37 +933,32 @@
         const actualites = JSON.parse(localStorage.getItem('franchiniActualites')) || [];
         let currentActualiteEditId = null;
 
-        // Gestion des utilisateurs
-        let utilisateurs = JSON.parse(localStorage.getItem('franchiniUtilisateurs')) || [];
-        let currentUtilisateurEditId = null;
-
-        // Assurer qu'il y a au moins un administrateur par défaut si la liste est vide
-        if (utilisateurs.length === 0) {
-            utilisateurs.push({ id: Date.now(), nom: 'Cedric', mdp: '159632' }); // Mot de passe en clair (NON SÉCURISÉ)
-            localStorage.setItem('franchiniUtilisateurs', JSON.stringify(utilisateurs));
-        }
-
         // Gestion des onglets
         document.addEventListener('DOMContentLoaded', function() {
             const tabBtns = document.querySelectorAll('.tab-btn');
             const tabContents = document.querySelectorAll('.tab-content');
 
             tabBtns.forEach(btn => {
-                btn.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    
-                    // Retirer la classe active de tous les boutons et contenus
+                // Si c'est un lien externe, on ne fait rien de plus
+                if (btn.tagName === 'A') return;
+                
+                btn.addEventListener('click', () => {
+                    // Désactiver tous les onglets
                     tabBtns.forEach(b => b.classList.remove('active'));
-                    tabContents.forEach(c => c.classList.remove('active'));
+                    tabContents.forEach(content => content.classList.remove('active'));
                     
-                    // Ajouter la classe active au bouton cliqué
-                    this.classList.add('active');
-                    
-                    // Afficher le contenu correspondant
-                    const targetTab = this.getAttribute('data-tab');
-                    document.getElementById(targetTab).classList.add('active');
+                    // Activer l'onglet cliqué
+                    btn.classList.add('active');
+                    const tabId = btn.getAttribute('data-tab');
+                    document.getElementById(tabId).classList.add('active');
                 });
             });
+
+            // Activer le premier onglet par défaut (en sautant le lien externe)
+            const firstTab = document.querySelector('.tab-btn:not([href])');
+            if (firstTab) {
+                firstTab.click();
+            }
 
             // Gestion des occasions (tracteurs et matériels)
             const materielTypeRadios = document.querySelectorAll('input[name="materiel-categorie"]');
@@ -1173,12 +1344,422 @@
             setupDropzone('materiel-dropzone', 'materiel-photos', 'materiel-preview');
             setupDropzone('promo-dropzone', 'promo-image', 'promo-preview');
 
-            // Initialisation des tables au chargement
+            // Gestion du carrousel d'accueil
+            const carouselItems = JSON.parse(localStorage.getItem('franchiniCarousel')) || [];
+            let currentEditId = null;
+            
+            // Éléments du formulaire
+            const mediaTypeSelect = document.getElementById('media-type');
+            const imageUploadSection = document.getElementById('image-upload-section');
+            const youtubeSection = document.getElementById('youtube-section');
+            const mediaUpload = document.getElementById('media-upload');
+            const mediaPreview = document.getElementById('media-preview');
+            const youtubeUrl = document.getElementById('youtube-url');
+            const mediaTitle = document.getElementById('media-title');
+            const mediaDescription = document.getElementById('media-description');
+            const mediaLink = document.getElementById('media-link');
+            const linkText = document.getElementById('link-text');
+            const addMediaBtn = document.getElementById('add-media-btn');
+            const carouselItemsContainer = document.getElementById('carousel-items');
+            
+            // Basculer entre les types de médias
+            mediaTypeSelect.addEventListener('change', function() {
+                if (this.value === 'image') {
+                    imageUploadSection.style.display = 'block';
+                    youtubeSection.style.display = 'none';
+                } else {
+                    imageUploadSection.style.display = 'none';
+                    youtubeSection.style.display = 'block';
+                }
+            });
+            
+            // Gestion du glisser-déposer pour les images
+            const dropzone = document.getElementById('media-dropzone');
+            
+            if (dropzone && mediaUpload) {
+                // Empêcher le comportement par défaut pour tous les événements de glisser-déposer
+                ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                    dropzone.addEventListener(eventName, preventDefaults, false);
+                    document.body.addEventListener(eventName, preventDefaults, false);
+                });
+                
+                function preventDefaults(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                }
+                
+                // Mettre en surbrillance la zone de dépôt
+                ['dragenter', 'dragover'].forEach(eventName => {
+                    dropzone.addEventListener(eventName, highlight, false);
+                });
+                
+                // Retirer la surbrillance
+                ['dragleave', 'drop'].forEach(eventName => {
+                    dropzone.addEventListener(eventName, unhighlight, false);
+                });
+                
+                function highlight() {
+                    dropzone.classList.add('highlight');
+                }
+                
+                function unhighlight() {
+                    dropzone.classList.remove('highlight');
+                }
+                
+                // Gérer le dépôt de fichiers
+                dropzone.addEventListener('drop', handleDrop, false);
+                
+                function handleDrop(e) {
+                    const dt = e.dataTransfer;
+                    const files = dt.files;
+                    
+                    // Mettre à jour l'input file avec les fichiers déposés
+                    if (files.length > 0) {
+                        // Créer un nouveau DataTransfer pour mettre à jour les fichiers
+                        const dataTransfer = new DataTransfer();
+                        dataTransfer.items.add(files[0]); // On ne prend que le premier fichier
+                        mediaUpload.files = dataTransfer.files;
+                        
+                        // Déclencher l'événement change manuellement
+                        const event = new Event('change');
+                        mediaUpload.dispatchEvent(event);
+                    }
+                }
+                
+                // Gérer le clic sur la zone de dépôt
+                dropzone.addEventListener('click', () => {
+                    mediaUpload.click();
+                });
+            }
+            
+            // Gérer la sélection de fichiers via le bouton
+            if (mediaUpload) {
+                mediaUpload.addEventListener('change', function() {
+                    if (this.files && this.files.length > 0) {
+                        handleFiles(this.files);
+                    }
+                });
+            }
+            
+            function handleFiles(files) {
+                if (!files || files.length === 0) return;
+                
+                const file = files[0];
+                if (!file) return;
+                
+                if (file.type && file.type.startsWith('image/')) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        if (mediaPreview) {
+                            // Créer un conteneur pour l'aperçu avec un bouton de suppression
+                            mediaPreview.innerHTML = `
+                                <div class="media-preview-container" style="position: relative; display: inline-block;">
+                                    <img src="${e.target.result}" alt="Aperçu" style="max-width: 100%; max-height: 200px; display: block;">
+                                    <button type="button" class="remove-media-btn" style="position: absolute; top: 5px; right: 5px; background: rgba(0,0,0,0.5); color: white; border: none; border-radius: 50%; width: 25px; height: 25px; cursor: pointer; display: flex; align-items: center; justify-content: center;">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                            `;
+                            
+                            // Ajouter un écouteur d'événement pour le bouton de suppression
+                            const removeBtn = mediaPreview.querySelector('.remove-media-btn');
+                            if (removeBtn) {
+                                removeBtn.addEventListener('click', function(e) {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                    mediaPreview.innerHTML = '';
+                                    mediaUpload.value = ''; // Réinitialiser l'input file
+                                });
+                            }
+                        }
+                    };
+                    reader.readAsDataURL(file);
+                } else if (mediaPreview) {
+                    mediaPreview.innerHTML = '<p style="color: #dc3545;">Format de fichier non supporté. Veuillez utiliser une image (JPG, PNG, etc.).</p>';
+                }
+            }
+            
+            // Ajouter un élément au carrousel
+            if (addMediaBtn) {
+                addMediaBtn.addEventListener('click', function() {
+                    const type = mediaTypeSelect ? mediaTypeSelect.value : 'image';
+                    let mediaUrl = '';
+                    
+                    if (type === 'image') {
+                        // Vérifier si un fichier a été sélectionné via l'input file
+                        if (mediaUpload && mediaUpload.files && mediaUpload.files.length > 0) {
+                            const reader = new FileReader();
+                            reader.onload = function(e) {
+                                mediaUrl = e.target.result;
+                                addCarouselItem(type, mediaUrl);
+                            };
+                            reader.readAsDataURL(mediaUpload.files[0]);
+                            return; // On sort de la fonction ici, le reste sera géré dans le callback
+                        } 
+                        // Vérifier si une image est déjà affichée dans la prévisualisation
+                        else if (mediaPreview && mediaPreview.querySelector('img')) {
+                            mediaUrl = mediaPreview.querySelector('img').src;
+                        } else {
+                            alert('Veuvez téléverser une image');
+                            return;
+                        }
+                    } else {
+                        const youtubeId = youtubeUrl ? extractYoutubeId(youtubeUrl.value) : null;
+                        if (!youtubeId) {
+                            alert('URL YouTube invalide');
+                            return;
+                        }
+                        mediaUrl = `https://www.youtube.com/embed/${youtubeId}`;
+                    }
+                    
+                    addCarouselItem(type, mediaUrl);
+                });
+            }
+            
+            // Fonction pour ajouter un élément au carrousel
+            function addCarouselItem(type, mediaUrl) {
+                if (!mediaUrl) return;
+                
+                const item = {
+                    id: currentEditId || Date.now(),
+                    type: type,
+                    url: mediaUrl,
+                    title: mediaTitle ? mediaTitle.value : '',
+                    description: mediaDescription ? mediaDescription.value : '',
+                    link: mediaLink ? mediaLink.value : '',
+                    linkText: linkText ? (linkText.value || 'Voir plus') : 'Voir plus',
+                    order: carouselItems.length
+                };
+                
+                if (currentEditId) {
+                    // Mise à jour d'un élément existant
+                    const index = carouselItems.findIndex(item => item.id === currentEditId);
+                    if (index !== -1) {
+                        carouselItems[index] = item;
+                    }
+                    currentEditId = null;
+                    if (addMediaBtn) {
+                        addMediaBtn.innerHTML = '<i class="fas fa-plus"></i> Ajouter au carrousel';
+                    }
+                } else {
+                    // Ajout d'un nouvel élément
+                    carouselItems.push(item);
+                }
+                
+                saveCarousel();
+                updateCarouselDisplay();
+                resetForm();
+            }
+            
+            // Extraire l'ID d'une URL YouTube
+            function extractYoutubeId(url) {
+                const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+                const match = url.match(regExp);
+                return (match && match[2].length === 11) ? match[2] : null;
+            }
+            
+            // Mettre à jour l'affichage du carrousel
+            function updateCarouselDisplay() {
+                if (!carouselItemsContainer) return;
+                
+                carouselItemsContainer.innerHTML = '';
+                
+                // Trier les éléments par ordre
+                const sortedItems = [...carouselItems].sort((a, b) => a.order - b.order);
+                
+                sortedItems.forEach((item, index) => {
+                    const itemElement = document.createElement('div');
+                    itemElement.className = 'carousel-item';
+                    itemElement.draggable = true;
+                    itemElement.dataset.id = item.id;
+                    
+                    let mediaContent = '';
+                    if (item.type === 'image') {
+                        mediaContent = `<img src="${item.url}" alt="${item.title || 'Image du carrousel'}">`;
+                    } else {
+                        mediaContent = `<iframe src="${item.url}" frameborder="0" allowfullscreen></iframe>`;
+                    }
+                    
+                    itemElement.innerHTML = `
+                        <div class="carousel-item-preview">
+                            ${mediaContent}
+                        </div>
+                        <div class="carousel-item-details">
+                            ${item.title ? `<h4>${item.title}</h4>` : ''}
+                            ${item.description ? `<p>${item.description}</p>` : ''}
+                            ${item.link ? `<a href="${item.link}" class="carousel-item-link" target="_blank">${item.linkText}</a>` : ''}
+                            <div class="carousel-item-actions">
+                                <div class="carousel-item-buttons">
+                                    <button class="edit-item" title="Modifier">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="delete-item" title="Supprimer">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                                <div class="drag-handle" title="Déplacer">
+                                    <i class="fas fa-arrows-alt"></i>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    
+                    // Ajouter les gestionnaires d'événements
+                    const editBtn = itemElement.querySelector('.edit-item');
+                    const deleteBtn = itemElement.querySelector('.delete-item');
+                    const dragHandle = itemElement.querySelector('.drag-handle');
+                    
+                    editBtn.addEventListener('click', () => editCarouselItem(item.id));
+                    deleteBtn.addEventListener('click', () => deleteCarouselItem(item.id));
+                    
+                    // Ajouter les gestionnaires d'événements pour le glisser-déposer
+                    if (itemElement) {
+                        itemElement.addEventListener('dragstart', handleDragStart);
+                        itemElement.addEventListener('dragover', handleDragOver);
+                        itemElement.addEventListener('drop', handleDrop);
+                        itemElement.addEventListener('dragend', handleDragEnd);
+                        itemElement.addEventListener('dragleave', function() {
+                            this.classList.remove('drag-over');
+                        });
+                    }
+                    
+                    carouselItemsContainer.appendChild(itemElement);
+                });
+            }
+            
+            // Réinitialiser le formulaire
+            function resetForm() {
+                mediaTypeSelect.value = 'image';
+                mediaPreview.innerHTML = '';
+                youtubeUrl.value = '';
+                mediaTitle.value = '';
+                mediaDescription.value = '';
+                mediaLink.value = '';
+                linkText.value = 'Voir plus';
+                imageUploadSection.style.display = 'block';
+                youtubeSection.style.display = 'none';
+            }
+            
+            // Éditer un élément du carrousel
+            function editCarouselItem(id) {
+                const item = carouselItems.find(item => item.id === id);
+                if (!item) return;
+                
+                currentEditId = id;
+                
+                // Remplir le formulaire avec les données de l'élément
+                mediaTypeSelect.value = item.type;
+                
+                if (item.type === 'image') {
+                    mediaPreview.innerHTML = `<img src="${item.url}" alt="Aperçu">`;
+                    imageUploadSection.style.display = 'block';
+                    youtubeSection.style.display = 'none';
+                } else {
+                    youtubeUrl.value = `https://www.youtube.com/watch?v=${item.url.split('/').pop()}`;
+                    imageUploadSection.style.display = 'none';
+                    youtubeSection.style.display = 'block';
+                }
+                
+                mediaTitle.value = item.title || '';
+                mediaDescription.value = item.description || '';
+                mediaLink.value = item.link || '';
+                linkText.value = item.linkText || 'Voir plus';
+                
+                addMediaBtn.innerHTML = '<i class="fas fa-save"></i> Enregistrer les modifications';
+                
+                // Faire défiler vers le formulaire
+                document.querySelector('#accueil .admin-card h3').scrollIntoView({ behavior: 'smooth' });
+            }
+            
+            // Supprimer un élément du carrousel
+            function deleteCarouselItem(id) {
+                if (confirm('Êtes-vous sûr de vouloir supprimer cet élément du carrousel ?')) {
+                    const index = carouselItems.findIndex(item => item.id === id);
+                    if (index !== -1) {
+                        carouselItems.splice(index, 1);
+                        saveCarousel();
+                        updateCarouselDisplay();
+                    }
+                }
+            }
+            
+            // Enregistrer le carrousel dans le stockage local
+            function saveCarousel() {
+                localStorage.setItem('franchiniCarousel', JSON.stringify(carouselItems));
+            }
+            
+            // Gestion du glisser-déposer pour le réordonnancement
+            let draggedItem = null;
+            
+            function handleDragStart(e) {
+                draggedItem = this;
+                this.classList.add('dragging');
+                e.dataTransfer.effectAllowed = 'move';
+                e.dataTransfer.setData('text/html', this.innerHTML);
+            }
+            
+            function handleDragOver(e) {
+                e.preventDefault();
+                e.dataTransfer.dropEffect = 'move';
+                this.classList.add('drag-over');
+            }
+            
+            function handleDrop(e) {
+                e.stopPropagation();
+                this.classList.remove('drag-over');
+                
+                if (draggedItem !== this) {
+                    // Échanger les positions dans le tableau
+                    const fromId = parseInt(draggedItem.dataset.id);
+                    const toId = parseInt(this.dataset.id);
+                    
+                    const fromIndex = carouselItems.findIndex(item => item.id === fromId);
+                    const toIndex = carouselItems.findIndex(item => item.id === toId);
+                    
+                    if (fromIndex !== -1 && toIndex !== -1) {
+                        // Mettre à jour l'ordre
+                        const [movedItem] = carouselItems.splice(fromIndex, 1);
+                        carouselItems.splice(toIndex, 0, movedItem);
+                        
+                        // Mettre à jour les ordres
+                        carouselItems.forEach((item, index) => {
+                            item.order = index;
+                        });
+                        
+                        saveCarousel();
+                        updateCarouselDisplay();
+                    }
+                }
+                
+                return false;
+            }
+            
+            function handleDragEnd() {
+                this.classList.remove('dragging');
+                document.querySelectorAll('.carousel-item').forEach(item => {
+                    item.classList.remove('drag-over');
+                });
+            }
+            
+            // Initialisation
+            if (carouselItemsContainer) {
+                updateCarouselDisplay();
+                
+                // Ajouter les écouteurs d'événements pour le glisser-déposer
+                carouselItemsContainer.addEventListener('dragover', function(e) {
+                    e.preventDefault();
+                });
+                
+                carouselItemsContainer.addEventListener('drop', function(e) {
+                    e.preventDefault();
+                });
+            }
+            
+            // Initialisation des données pour les autres onglets
             updateMaterielsTable();
             updateActualitesTable();
             updatePromosTable();
             updateContactsTable();
-            updateUtilisateursTable(); // Ajout pour initialiser la table des utilisateurs
 
             // Gestion des actualités
             const addActualiteBtn = document.getElementById('add-actualite-btn');
@@ -1262,143 +1843,57 @@
                 }
             }
 
-            // Logique pour la gestion des utilisateurs
-            const addUtilisateurBtn = document.getElementById('add-utilisateur-btn');
-            const utilisateursTableBody = document.getElementById('utilisateurs-table-body');
-            const utilisateurForm = document.getElementById('utilisateur-form');
-
-            if (addUtilisateurBtn) {
-                addUtilisateurBtn.addEventListener('click', function() {
-                    const id = document.getElementById('utilisateur-id').value;
-                    const nom = document.getElementById('utilisateur-nom').value.trim();
-                    const mdp = document.getElementById('utilisateur-mdp').value; // Pas de .trim() pour les MDP
-
-                    if (nom && mdp) {
-                        if (id) { // Modification
-                            const index = utilisateurs.findIndex(u => u.id === parseInt(id));
-                            if (index !== -1) {
-                                utilisateurs[index].nom = nom;
-                                utilisateurs[index].mdp = mdp; // NON SÉCURISÉ
-                            }
-                        } else { // Ajout
-                            // Vérifier si le nom d'utilisateur existe déjà
-                            if (utilisateurs.some(u => u.nom.toLowerCase() === nom.toLowerCase())) {
-                                alert('Ce nom d\'utilisateur existe déjà.');
-                                return;
-                            }
-                            utilisateurs.push({ id: Date.now(), nom, mdp }); // NON SÉCURISÉ
+            function setupDropzone(dropzoneId, inputId, previewId) {
+                const dropzone = document.getElementById(dropzoneId);
+                const input = document.getElementById(inputId);
+                const preview = document.getElementById(previewId);
+                
+                if (dropzone && input && preview) {
+                    dropzone.addEventListener('click', () => input.click());
+                    dropzone.addEventListener('dragover', e => { e.preventDefault(); dropzone.classList.add('dragover'); });
+                    dropzone.addEventListener('dragleave', () => dropzone.classList.remove('dragover'));
+                    dropzone.addEventListener('drop', e => {
+                        e.preventDefault();
+                        dropzone.classList.remove('dragover');
+                        if (e.dataTransfer.files.length > 0) {
+                            input.files = e.dataTransfer.files;
+                            handleFiles(input.files, preview);
                         }
-                        localStorage.setItem('franchiniUtilisateurs', JSON.stringify(utilisateurs));
-                        updateUtilisateursTable();
-                        resetUtilisateurForm();
-                    } else {
-                        alert('Veuillez remplir tous les champs pour l\'utilisateur.');
+                    });
+                    input.addEventListener('change', () => handleFiles(input.files, preview));
+                }
+            }
+
+            function handleFiles(files, preview) {
+                if (!preview || !files || files.length === 0) return;
+                
+                preview.innerHTML = '';
+                for (let i = 0; i < files.length; i++) {
+                    const file = files[i];
+                    if (file && file.type && file.type.startsWith('image/')) {
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            const thumbnail = document.createElement('div');
+                            thumbnail.className = 'thumbnail';
+                            thumbnail.innerHTML = `<img src="${e.target.result}" alt="Aperçu" style="max-width: 100%; max-height: 200px;"><div class="thumbnail-name">${file.name}</div>`;
+                            preview.appendChild(thumbnail);
+                        };
+                        reader.readAsDataURL(file);
+                    } else if (preview) {
+                        preview.innerHTML = '<p>Format de fichier non supporté. Veuillez utiliser une image.</p>';
                     }
-                });
-            }
-
-            function updateUtilisateursTable() {
-                if (!utilisateursTableBody) return;
-                utilisateursTableBody.innerHTML = '';
-                utilisateurs.forEach(user => {
-                    const tr = document.createElement('tr');
-                    tr.innerHTML = `
-                        <td>${user.nom}</td>
-                        <td>
-                            <div class="action-btns">
-                                <button class="action-btn edit" title="Modifier" data-id="${user.id}"><i class="fas fa-edit"></i></button>
-                                <button class="action-btn delete" title="Supprimer" data-id="${user.id}"><i class="fas fa-trash-alt"></i></button>
-                            </div>
-                        </td>
-                    `;
-                    utilisateursTableBody.appendChild(tr);
-                });
-                document.querySelectorAll('#utilisateurs-table-body .action-btn.edit').forEach(btn => btn.addEventListener('click', e => editUtilisateur(parseInt(e.currentTarget.dataset.id))));
-                document.querySelectorAll('#utilisateurs-table-body .action-btn.delete').forEach(btn => btn.addEventListener('click', e => deleteUtilisateur(parseInt(e.currentTarget.dataset.id))));
-            }
-
-            function resetUtilisateurForm() {
-                if (utilisateurForm) utilisateurForm.reset();
-                document.getElementById('utilisateur-id').value = '';
-                if (addUtilisateurBtn) addUtilisateurBtn.innerHTML = '<i class="fas fa-plus"></i> Ajouter l\'utilisateur';
-                if (addUtilisateurBtn) addUtilisateurBtn.classList.remove('btn-warning'); 
-                if (addUtilisateurBtn) addUtilisateurBtn.classList.add('btn-primary');
-            }
-
-            window.editUtilisateur = function(id) { // Exposer globalement pour l'appel depuis le HTML dynamique
-                const user = utilisateurs.find(u => u.id === id);
-                if (!user) return;
-                document.getElementById('utilisateur-id').value = user.id;
-                document.getElementById('utilisateur-nom').value = user.nom;
-                document.getElementById('utilisateur-mdp').value = user.mdp; // Pré-remplir le MDP pour modification (NON SÉCURISÉ)
-                if (addUtilisateurBtn) {
-                    addUtilisateurBtn.innerHTML = '<i class="fas fa-save"></i> Enregistrer les modifications';
-                    addUtilisateurBtn.classList.remove('btn-primary');
-                    addUtilisateurBtn.classList.add('btn-warning');
-                }
-                document.querySelector('#utilisateurs .admin-card h3').scrollIntoView({ behavior: 'smooth' });
-            }
-
-            window.deleteUtilisateur = function(id) { // Exposer globalement
-                // Empêcher la suppression du dernier utilisateur
-                if (utilisateurs.length <= 1) {
-                    alert('Vous ne pouvez pas supprimer le dernier utilisateur.');
-                    return;
-                }
-                if (confirm('Êtes-vous sûr de vouloir supprimer cet utilisateur ?')) {
-                    utilisateurs = utilisateurs.filter(u => u.id !== id);
-                    localStorage.setItem('franchiniUtilisateurs', JSON.stringify(utilisateurs));
-                    updateUtilisateursTable();
                 }
             }
-        });
 
-        function setupDropzone(dropzoneId, inputId, previewId) {
-            const dropzone = document.getElementById(dropzoneId);
-            const input = document.getElementById(inputId);
-            const preview = document.getElementById(previewId);
-            
-            if (dropzone && input && preview) {
-                dropzone.addEventListener('click', () => input.click());
-                dropzone.addEventListener('dragover', e => { e.preventDefault(); dropzone.classList.add('dragover'); });
-                dropzone.addEventListener('dragleave', () => dropzone.classList.remove('dragover'));
-                dropzone.addEventListener('drop', e => {
-                    e.preventDefault();
-                    dropzone.classList.remove('dragover');
-                    if (e.dataTransfer.files.length > 0) {
-                        input.files = e.dataTransfer.files;
-                        handleFiles(input.files, preview);
-                    }
-                });
-                input.addEventListener('change', () => handleFiles(input.files, preview));
+            function formatDate(dateString) {
+                if (!dateString) return '';
+                const date = new Date(dateString);
+                const day = date.getDate().toString().padStart(2, '0');
+                const month = (date.getMonth() + 1).toString().padStart(2, '0');
+                const year = date.getFullYear();
+                return `${day}/${month}/${year}`;
             }
-        }
-
-        function handleFiles(files, preview) {
-            preview.innerHTML = '';
-            for (let i = 0; i < files.length; i++) {
-                const file = files[i];
-                if (file.type.startsWith('image/')) {
-                    const reader = new FileReader();
-                    reader.onload = function(e) {
-                        const thumbnail = document.createElement('div');
-                        thumbnail.className = 'thumbnail';
-                        thumbnail.innerHTML = `<img src="${e.target.result}" alt="Aperçu"><div class="thumbnail-name">${file.name}</div>`;
-                        preview.appendChild(thumbnail);
-                    };
-                    reader.readAsDataURL(file);
-                }
-            }
-        }
-
-        function formatDate(dateString) {
-            if (!dateString) return '';
-            const date = new Date(dateString);
-            const day = date.getDate().toString().padStart(2, '0');
-            const month = (date.getMonth() + 1).toString().padStart(2, '0');
-            const year = date.getFullYear();
-            return `${day}/${month}/${year}`;
-        }
+        }); // Fin de l'écouteur d'événement DOMContentLoaded
     </script>
 </body>
 </html>

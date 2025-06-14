@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Connexion Privée - Franchini</title>
-    <link rel="stylesheet" href="../assets/css/style.css"> <!-- Style global, peut contenir des reset/normalize utiles -->
+    <link rel="stylesheet" href="../assets/css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         body {
@@ -43,11 +43,11 @@
         }
         
         .login-header .franchini-logo {
-            width: 200px; /* Largeur fixe pour le logo */
-            height: auto; /* Maintient les proportions */
-            margin: 0 auto 1.5rem; /* Centre le logo horizontalement et ajoute une marge en dessous */
-            display: block; /* Important pour que la marge auto fonctionne */
-            max-width: 100%; /* S'assure que le logo ne dépasse pas de son conteneur */
+            width: 200px;
+            height: auto;
+            margin: 0 auto 1.5rem;
+            display: block;
+            max-width: 100%;
         }
 
         .login-header h1 {
@@ -63,7 +63,7 @@
             padding: 0.8rem 1rem;
             border-radius: 4px;
             margin-bottom: 1.5rem;
-            display: none; /* Caché par défaut, affiché par JS */
+            display: none;
             align-items: center;
             font-size: 0.85rem;
             border-left: 3px solid #c62828;
@@ -185,14 +185,12 @@
         .login-links a i {
             margin-right: 0.3rem;
         }
-
     </style>
 </head>
 <body>
     <main>
         <div class="login-box">
             <div class="login-header">
-                <!-- Remplacer l'icône de cadenas par le logo Franchini -->
                 <img src="../assets/images/logo/Logo Franchini 2.jpg" alt="Logo Franchini" class="franchini-logo">
                 <h1>Accès Privé</h1>
             </div>
@@ -222,14 +220,8 @@
                     <i class="fas fa-sign-in-alt"></i>
                     Se connecter
                 </button>
-                <div style="display: flex; justify-content: space-between; align-items: center; margin: 15px 0;">
-                    <div class="remember-me">
-                        <input type="checkbox" id="remember-me" name="remember-me">
-                        <label for="remember-me" style="font-size: 0.85em; color: #555; cursor: pointer;">
-                            Se souvenir de moi
-                        </label>
-                    </div>
-                    <a href="#" id="forgot-password-link" style="color: #333; font-size: 0.85em; text-decoration: none; cursor: pointer;">Mot de passe oublié</a>
+                <div style="text-align: center; margin: 15px 0;">
+                    <a href="#" id="forgot-password-link" style="color: #333; font-size: 0.9em; text-decoration: none; cursor: pointer;">Mot de passe oublié</a>
                 </div>
                 <div id="reset-password-form" style="display: none; margin-top: 1.5rem; padding: 1.5rem; background: #f8f9fa; border-radius: 8px; border: 1px solid #e9ecef;">
                     <h3 style="font-size: 1.1rem; margin: 0 0 1rem 0; color: #333; text-align: center;">Réinitialiser le mot de passe</h3>
@@ -249,8 +241,9 @@
         </div>
     </main>
 
-    <!-- Intégration de la configuration Supabase -->
-    <script src="../assets/js/auth/supabase-config.js" defer></script>
+    <!-- Intégration du SDK Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../js/supabase-config.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // Éléments du formulaire
@@ -265,31 +258,15 @@
             const resetPasswordBtn = document.getElementById('reset-password-btn');
             const resetMessage = document.getElementById('reset-message');
             
-            // Charger les identifiants enregistrés
-            function loadSavedCredentials() {
-                const savedEmail = localStorage.getItem('savedEmail');
-                const saveCredentials = localStorage.getItem('saveCredentials') === 'true';
-                
-                if (savedEmail && saveCredentials) {
-                    emailInput.value = savedEmail;
-                    document.getElementById('remember-me').checked = true;
-                }
-            }
-            
             // Vérifier si l'utilisateur est déjà connecté
             async function checkAuth() {
                 try {
                     const { data: { session } } = await window.supabase.auth.getSession();
                     if (session) {
-                        window.location.href = 'administrateur.html';
-                    } else {
-                        // Charger les identifiants enregistrés uniquement si pas de session active
-                        loadSavedCredentials();
+                        window.location.href = '../index.html';
                     }
                 } catch (error) {
                     console.error('Erreur de vérification de session:', error);
-                    // Charger les identifiants même en cas d'erreur
-                    loadSavedCredentials();
                 }
             }
             
@@ -329,18 +306,8 @@
                         
                         if (error) throw error;
                         
-                        // Sauvegarder les identifiants si la case est cochée
-                        const rememberMe = document.getElementById('remember-me').checked;
-                        if (rememberMe) {
-                            localStorage.setItem('savedEmail', email);
-                            localStorage.setItem('saveCredentials', 'true');
-                        } else {
-                            localStorage.removeItem('savedEmail');
-                            localStorage.setItem('saveCredentials', 'false');
-                        }
-                        
                         console.log('Connexion réussie:', data);
-                        window.location.href = 'administrateur.html';
+                        window.location.href = '../index.html';
                         
                     } catch (error) {
                         console.error('Erreur de connexion:', error);
@@ -354,7 +321,7 @@
                 if (!errorMessageDiv) return;
                 
                 errorMessageDiv.querySelector('span').textContent = message;
-                errorMessageDiv.style.display = 'block';
+                errorMessageDiv.style.display = 'flex';
                 
                 // Masquer le message après 5 secondes
                 setTimeout(() => {
@@ -426,7 +393,7 @@
                 backToLogin.addEventListener('click', function(e) {
                     e.preventDefault();
                     if (resetPasswordForm) resetPasswordForm.style.display = 'none';
-                    if (loginFormContainer) loginFormContainer.style.display = 'block';
+                    if (loginForm) loginForm.style.display = 'block';
                     if (forgotPasswordLink) forgotPasswordLink.style.display = 'block';
                 });
             }
